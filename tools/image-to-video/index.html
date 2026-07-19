@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IYORSHKA - MP4 Merger</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+        * { margin: 0; padding: 0; box-sizing: border-box; image-rendering: pixelated; }
+        body { font-family: 'Press Start 2P', cursive; background: #0a0a0a; min-height: 100vh; color: #fff; }
+        .hex-pattern { position: fixed; top: -100%; left: 0; width: 100%; height: 200%; z-index: 1; opacity: 0.15; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='97' viewBox='0 0 56 97'%3E%3Cpolygon points='28,0 56,16 56,48 56,80 28,97 0,80 0,48 0,16' fill='none' stroke='%23ffffff' stroke-width='1'/%3E%3C/svg%3E"); background-size: 56px 97px; animation: hexMoveDown 120s linear infinite; }
+        @keyframes hexMoveDown { 0%{transform:translateY(0)} 100%{transform:translateY(50%)} }
+        .side-light { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 2; background: linear-gradient(90deg, rgba(255,255,255,0.03) 0%, transparent 20%, transparent 80%, rgba(255,255,255,0.03) 100%); }
+        .scanlines { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 100; background: repeating-linear-gradient(0deg, rgba(0,0,0,0.15), rgba(0,0,0,0.15) 1px, transparent 1px, transparent 2px); }
+        .noise { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 99; opacity: 0.03; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E"); }
+        .vhs-left, .vhs-right { position: fixed; top: 0; width: 120px; height: 100%; z-index: 4; pointer-events: none; overflow: hidden; }
+        .vhs-left { left: 0; } .vhs-right { right: 0; }
+        .vhs-left::before, .vhs-right::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: repeating-linear-gradient(0deg, transparent 0px, transparent 2px, rgba(255,0,0,0.03) 2px, rgba(255,0,0,0.03) 4px, transparent 4px, transparent 8px, rgba(0,255,255,0.03) 8px, rgba(0,255,255,0.03) 10px); animation: vhsScroll 0.5s linear infinite; }
+        .vhs-left::after { content: ''; position: absolute; left: 0; top: 0; width: 100%; height: 100%; background: linear-gradient(90deg, rgba(255,0,0,0.1) 0%, rgba(0,255,255,0.05) 30%, transparent 100%); animation: vhsGlitch 3s ease-in-out infinite; }
+        .vhs-right::after { content: ''; position: absolute; right: 0; top: 0; width: 100%; height: 100%; background: linear-gradient(-90deg, rgba(0,255,255,0.1) 0%, rgba(255,0,0,0.05) 30%, transparent 100%); animation: vhsGlitch 3s ease-in-out infinite; }
+        @keyframes vhsScroll { 0%{transform:translateY(0)} 100%{transform:translateY(10px)} }
+        @keyframes vhsGlitch { 0%,100%{opacity:0.3} 50%{opacity:0.5} }
+        .horizontal-line { position: fixed; top: 60px; left: 0; width: 100%; height: 2px; background: #fff; z-index: 9; box-shadow: 0 0 10px rgba(255,255,255,0.3); }
+        .horizontal-line::before, .horizontal-line::after { content: ''; position: absolute; left: 0; width: 100%; height: 2px; }
+        .horizontal-line::before { top: -1px; background: rgba(255,0,0,0.3); }
+        .horizontal-line::after { top: 1px; background: rgba(0,255,255,0.3); }
+        .nav-tabs { position: fixed; top: 20px; left: 20px; z-index: 10; display: flex; gap: 8px; flex-wrap: wrap; max-width: calc(100vw - 40px); }
+        .nav-tab { background: rgba(10,10,10,0.95); border: 2px solid #fff; color: #fff; padding: 10px 18px; font-family:'Press Start 2P',cursive; font-size: 8px; cursor: pointer; transition: all 0.15s ease-out; box-shadow: 3px 3px 0 rgba(0,0,0,0.8), inset -1px -1px 0 rgba(0,0,0,0.5), inset 1px 1px 0 rgba(255,255,255,0.1); text-transform: uppercase; letter-spacing: 1px; position: relative; clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 0 100%); user-select: none; text-decoration: none; display: inline-block; }
+        .nav-tab::before { content: ''; position: absolute; top: 0; right: 0; width: 14px; height: 14px; border-left: 2px solid #fff; border-bottom: 2px solid #fff; transform: rotate(-45deg) translate(5px,-5px); background: transparent; }
+        .nav-tab:hover { transform: translateY(-4px); background: rgba(30,30,30,0.95); box-shadow: 3px 7px 0 rgba(0,0,0,0.8), inset -1px -1px 0 rgba(0,0,0,0.5), inset 1px 1px 0 rgba(255,255,255,0.2); }
+        .nav-tab:active { transform: translateY(-2px); box-shadow: 3px 5px 0 rgba(0,0,0,0.8), inset -1px -1px 0 rgba(0,0,0,0.5), inset 1px 1px 0 rgba(255,255,255,0.2); }
+        .nav-tab.active { background: rgba(50,50,50,0.95); transform: translateY(-2px); box-shadow: 3px 5px 0 rgba(0,0,0,0.8), inset -1px -1px 0 rgba(0,0,0,0.5), inset 1px 1px 0 rgba(255,255,255,0.3); }
+        .main-container { position: relative; z-index: 5; padding: 130px 40px 40px; max-width: 900px; margin: 0 auto; }
+        .window { background: rgba(10,10,10,0.95); border: 3px solid #fff; box-shadow: 8px 8px 0 rgba(0,0,0,0.8), -2px -2px 0 rgba(255,255,0,0.1), inset 0 0 30px rgba(255,255,255,0.02); }
+        .window-header { background: linear-gradient(180deg, #1a1a1a 0%, #0d0d0d 100%); border-bottom: 2px solid #fff; padding: 8px 12px; display: flex; align-items: center; justify-content: center; }
+        .window-title { font-size: 11px; color: #000; text-shadow: -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff, 1px 1px 0 #fff; letter-spacing: 2px; }
+        .window-content { padding: 20px; }
+        .chromatic-border { position: relative; }
+        .chromatic-border::before, .chromatic-border::after { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; border: 2px solid transparent; pointer-events: none; z-index: 10; }
+        .chromatic-border::before { border-color: rgba(255,0,0,0.4); transform: translate(-3px,-1px); filter: blur(1px); }
+        .chromatic-border::after { border-color: rgba(0,255,255,0.4); transform: translate(3px,1px); filter: blur(1px); }
+        .btn { display: inline-block; padding: 12px 24px; background: linear-gradient(180deg, #1a1a1a 0%, #0d0d0d 50%, #1a1a1a 100%); border: 2px solid #fff; color: #fff; font-family:'Press Start 2P',cursive; font-size: 8px; cursor: pointer; text-decoration: none; text-transform: uppercase; letter-spacing: 1px; transition: all 0.1s; box-shadow: 3px 3px 0 rgba(0,0,0,0.8), inset -1px -1px 0 rgba(0,0,0,0.5), inset 1px 1px 0 rgba(255,255,255,0.1); }
+        .btn:hover { background: linear-gradient(180deg, #2a2a2a 0%, #1a1a1a 50%, #2a2a2a 100%); transform: translate(2px,2px); box-shadow: 1px 1px 0 rgba(0,0,0,0.8), inset -1px -1px 0 rgba(0,0,0,0.5), inset 1px 1px 0 rgba(255,255,255,0.2); }
+        .btn:active { transform: translate(3px,3px); box-shadow: 0px 0px 0 rgba(0,0,0,0.8); }
+        .desc-text { font-size: 7px; color: #aaa; line-height: 2; letter-spacing: 0.5px; }
+        .desc-text b { color: #fff; }
+        .desc-text .hl { color: #ffcc00; }
+        .feature-list { list-style: none; padding: 0; margin: 12px 0; }
+        .feature-list li { font-size: 7px; color: #aaa; line-height: 2; padding-left: 16px; position: relative; letter-spacing: 0.5px; }
+        .feature-list li::before { content: '>'; position: absolute; left: 0; color: #00ff88; }
+        .req-box { background: rgba(0,0,0,0.5); border: 1px solid #333; padding: 12px; margin: 12px 0; font-size: 7px; color: #888; line-height: 2; letter-spacing: 0.5px; }
+        .req-box b { color: #ddd; }
+        * { cursor: none !important; }
+        .custom-cursor { position: fixed; pointer-events: none; z-index: 10000; }
+        .cursor-triangle { width: 0; height: 0; border-left: 6px solid transparent; border-right: 6px solid transparent; border-bottom: 12px solid #fff; transform: translate(-6px,-2px) rotate(-30deg); filter: drop-shadow(0 0 2px rgba(255,255,255,0.8)); }
+        .cursor-triangle-red { position: absolute; top: 0; left: 0; width: 0; height: 0; border-left: 6px solid transparent; border-right: 6px solid transparent; border-bottom: 12px solid rgba(255,0,0,0.5); transform: translate(-8px,-3px) rotate(-30deg); filter: blur(1px); }
+        .cursor-triangle-cyan { position: absolute; top: 0; left: 0; width: 0; height: 0; border-left: 6px solid transparent; border-right: 6px solid transparent; border-bottom: 12px solid rgba(0,255,255,0.5); transform: translate(-4px,-1px) rotate(-30deg); filter: blur(1px); }
+    </style>
+</head>
+<body>
+    <div class="custom-cursor" id="customCursor">
+        <div class="cursor-triangle-red"></div>
+        <div class="cursor-triangle-cyan"></div>
+        <div class="cursor-triangle"></div>
+    </div>
+    <div class="hex-pattern"></div>
+    <div class="side-light"></div>
+    <div class="noise"></div>
+    <div class="scanlines"></div>
+    <div class="vhs-left"></div>
+    <div class="vhs-right"></div>
+    <div class="horizontal-line"></div>
+
+    <div class="nav-tabs">
+        <a class="nav-tab" href="../index.html">HOME</a>
+        <a class="nav-tab" href="../shots.html">SHOTS</a>
+        <a class="nav-tab" href="../mods.html">MODS</a>
+        <a class="nav-tab" href="../tools.html">TOOLS</a>
+        <a class="nav-tab" href="../credits.html">CREDITS</a>
+        <a class="nav-tab" href="../contacts.html">CONTACTS</a>
+    </div>
+
+    <div class="main-container">
+        <div class="window chromatic-border">
+            <div class="window-header">
+                <div class="window-title">MP4 MERGER</div>
+            </div>
+            <div class="window-content">
+                <div class="desc-text">
+                    <b>MP4 Merger</b> — десктопное приложение на Python с графическим интерфейсом (Tkinter)
+                    для работы с видео. Использует ffmpeg под капотом.
+                </div>
+
+                <ul class="feature-list">
+                    <li><b class="hl">Merge Videos</b> — слияние нескольких MP4 в один (stream copy или re-encode)</li>
+                    <li><b class="hl">Images to Video</b> — создание видео из последовательности изображений (с аудио)</li>
+                    <li><b class="hl">Rotate Video</b> — поворот видео на 90/180 градусов</li>
+                    <li><b class="hl">Smart Merge</b> — слияние видео с разными разрешениями (авто или ресемпл)</li>
+                </ul>
+
+                <div class="req-box">
+                    <b>Requirements:</b><br>
+                    Python 3.7+ · <a href="https://ffmpeg.org/" style="color:#44aaff;">ffmpeg</a> (imageio-ffmpeg) · moviepy (опционально)<br>
+                    <b>Install:</b> <span style="color:#888;">pip install imageio-ffmpeg moviepy</span>
+                </div>
+
+                <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:16px;">
+                    <a class="btn" href="image%20to%20video.py" download>⬇ DOWNLOAD .PY</a>
+                    <a class="btn" href="../tools.html">← BACK TO TOOLS</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const cursor = document.getElementById('customCursor');
+        document.addEventListener('mousemove', e => { if (cursor) { cursor.style.left = e.clientX + 'px'; cursor.style.top = e.clientY + 'px'; } });
+    </script>
+</body>
+</html>

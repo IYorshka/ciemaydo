@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IYORSHKA - TOOLS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+        * { margin: 0; padding: 0; box-sizing: border-box; image-rendering: pixelated; }
+        body { font-family: 'Press Start 2P', cursive; background: #0a0a0a; min-height: 100vh; overflow-x: hidden; }
+        .hex-pattern { position: fixed; top: -100%; left: 0; width: 100%; height: 200%; z-index: 1; opacity: 0.15; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='97' viewBox='0 0 56 97'%3E%3Cpolygon points='28,0 56,16 56,48 56,80 28,97 0,80 0,48 0,16' fill='none' stroke='%23ffffff' stroke-width='1'/%3E%3C/svg%3E"); background-size: 56px 97px; animation: hexMoveDown 120s linear infinite; }
+        @keyframes hexMoveDown { 0% { transform: translateY(0); } 100% { transform: translateY(50%); } }
+        .vhs-left, .vhs-right { position: fixed; top: 0; width: 120px; height: 100%; z-index: 4; pointer-events: none; overflow: hidden; }
+        .vhs-left { left: 0; } .vhs-right { right: 0; }
+        .vhs-left::before, .vhs-right::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: repeating-linear-gradient(0deg, transparent 0px, transparent 2px, rgba(255, 0, 0, 0.03) 2px, rgba(255, 0, 0, 0.03) 4px, transparent 4px, transparent 8px, rgba(0, 255, 255, 0.03) 8px, rgba(0, 255, 255, 0.03) 10px); animation: vhsScroll 0.5s linear infinite; }
+        .vhs-left::after { content: ''; position: absolute; left: 0; top: 0; width: 100%; height: 100%; background: linear-gradient(90deg, rgba(255, 0, 0, 0.1) 0%, rgba(0, 255, 255, 0.05) 30%, transparent 100%); animation: vhsGlitch 3s ease-in-out infinite; }
+        .vhs-right::after { content: ''; position: absolute; right: 0; top: 0; width: 100%; height: 100%; background: linear-gradient(-90deg, rgba(0, 255, 255, 0.1) 0%, rgba(255, 0, 0, 0.05) 30%, transparent 100%); animation: vhsGlitch 3s ease-in-out infinite; }
+        @keyframes vhsScroll { 0% { transform: translateY(0); } 100% { transform: translateY(10px); } }
+        @keyframes vhsGlitch { 0%, 100% { opacity: 0.3; } 50% { opacity: 0.5; } }
+        .scanlines { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 100; background: repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.15), rgba(0, 0, 0, 0.15) 1px, transparent 1px, transparent 2px); }
+        .noise { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 99; opacity: 0.03; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E"); }
+        .horizontal-line { position: fixed; top: 60px; left: 0; width: 100%; height: 2px; background: #ffffff; z-index: 9; box-shadow: 0 0 10px rgba(255, 255, 255, 0.3); }
+        .horizontal-line::before, .horizontal-line::after { content: ''; position: absolute; left: 0; width: 100%; height: 2px; }
+        .horizontal-line::before { top: -1px; background: rgba(255, 0, 0, 0.3); }
+        .horizontal-line::after { top: 1px; background: rgba(0, 255, 255, 0.3); }
+        .nav-tabs { position: fixed; top: 20px; left: 20px; z-index: 10; display: flex; gap: 8px; flex-wrap: wrap; max-width: calc(100vw - 40px); }
+        .nav-tab { background: rgba(10, 10, 10, 0.95); border: 2px solid #ffffff; color: #ffffff; padding: 10px 18px; font-family: 'Press Start 2P', cursive; font-size: 8px; cursor: pointer; transition: all 0.15s ease-out; box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.8), inset -1px -1px 0 rgba(0, 0, 0, 0.5), inset 1px 1px 0 rgba(255, 255, 255, 0.1); text-transform: uppercase; letter-spacing: 1px; position: relative; clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 0 100%); user-select: none; text-decoration: none; display: inline-block; }
+        .nav-tab::before { content: ''; position: absolute; top: 0; right: 0; width: 14px; height: 14px; border-left: 2px solid #ffffff; border-bottom: 2px solid #ffffff; transform: rotate(-45deg) translate(5px, -5px); background: transparent; }
+        .nav-tab:hover { transform: translateY(-4px); background: rgba(30, 30, 30, 0.95); box-shadow: 3px 7px 0 rgba(0, 0, 0, 0.8), inset -1px -1px 0 rgba(0, 0, 0, 0.5), inset 1px 1px 0 rgba(255, 255, 255, 0.2); }
+        .nav-tab:active { transform: translateY(-2px); box-shadow: 3px 5px 0 rgba(0, 0, 0, 0.8), inset -1px -1px 0 rgba(0, 0, 0, 0.5), inset 1px 1px 0 rgba(255, 255, 255, 0.2); }
+        .nav-tab.active { background: rgba(50, 50, 50, 0.95); transform: translateY(-2px); box-shadow: 3px 5px 0 rgba(0, 0, 0, 0.8), inset -1px -1px 0 rgba(0, 0, 0, 0.5), inset 1px 1px 0 rgba(255, 255, 255, 0.3); }
+        .nav-tab:hover::after { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; box-shadow: -2px 0 0 rgba(255, 0, 0, 0.3), 2px 0 0 rgba(0, 255, 255, 0.3); pointer-events: none; }
+        .page-title { position: fixed; top: 75px; left: 50%; transform: translateX(-50%); z-index: 10; font-size: 14px; color: #000000; text-shadow: -1px -1px 0 #ffffff, 1px -1px 0 #ffffff, -1px 1px 0 #ffffff, 1px 1px 0 #ffffff, 0 0 2px #ffffff; letter-spacing: 3px; }
+        .tools-container { position: relative; z-index: 5; padding: 130px 40px 40px 40px; max-width: 1200px; margin: 0 auto; }
+        .tools-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 20px; }
+        .tool-card { background: rgba(10, 10, 10, 0.95); border: 3px solid #ffffff; box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.8), inset -2px -2px 0 rgba(0, 0, 0, 0.5), inset 2px 2px 0 rgba(255, 255, 255, 0.1); transition: all 0.2s ease-out; display: flex; flex-direction: column; }
+        .tool-card:hover { transform: translate(-2px, -2px); box-shadow: 6px 6px 0 rgba(0, 0, 0, 0.8), inset -2px -2px 0 rgba(0, 0, 0, 0.5), inset 2px 2px 0 rgba(255, 255, 255, 0.1); }
+        .tool-card .card-header { background: linear-gradient(180deg, #1a1a1a 0%, #0d0d0d 100%); border-bottom: 2px solid #ffffff; padding: 10px 14px; text-align: center; }
+        .tool-card .card-header .card-title { font-size: 9px; color: #000; text-shadow: -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff, 1px 1px 0 #fff; letter-spacing: 1px; }
+        .tool-card .card-body { padding: 16px; flex: 1; display: flex; flex-direction: column; }
+        .tool-card .card-body .card-desc { font-size: 7px; color: #aaa; line-height: 1.8; margin-bottom: 12px; letter-spacing: 0.5px; flex: 1; }
+        .tool-card .card-body .card-meta { font-size: 6px; color: #666; margin-bottom: 12px; letter-spacing: 0.5px; }
+        .tool-card .card-body .card-meta span { color: #888; }
+        .tool-card .card-body .card-tags { display: flex; gap: 4px; flex-wrap: wrap; margin-bottom: 12px; }
+        .tool-card .card-body .card-tags .tag { display: inline-block; padding: 2px 8px; font-size: 6px; border: 1px solid #444; color: #aaa; letter-spacing: 0.5px; }
+        .tool-card .card-body .card-tags .tag.web { border-color: #44aaff; color: #44aaff; }
+        .tool-card .card-body .card-tags .tag.python { border-color: #ffcc00; color: #ffcc00; }
+        .tool-card .card-body .card-tags .tag.online { border-color: #00ff88; color: #00ff88; }
+        .tool-card .card-body .card-tags .tag.download { border-color: #ff6600; color: #ff6600; }
+        .card-btn { display: block; width: 100%; padding: 10px; background: linear-gradient(180deg, #1a1a1a 0%, #0d0d0d 50%, #1a1a1a 100%); border: 2px solid #ffffff; color: #ffffff; font-family: 'Press Start 2P', cursive; font-size: 7px; cursor: pointer; text-align: center; text-decoration: none; text-transform: uppercase; letter-spacing: 1px; transition: all 0.1s; box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.8), inset -1px -1px 0 rgba(0, 0, 0, 0.5), inset 1px 1px 0 rgba(255, 255, 255, 0.1); }
+        .card-btn:hover { background: linear-gradient(180deg, #2a2a2a 0%, #1a1a1a 50%, #2a2a2a 100%); transform: translate(2px, 2px); box-shadow: 1px 1px 0 rgba(0, 0, 0, 0.8), inset -1px -1px 0 rgba(0, 0, 0, 0.5), inset 1px 1px 0 rgba(255, 255, 255, 0.2); }
+        .card-btn:active { transform: translate(3px, 3px); box-shadow: 0px 0px 0 rgba(0, 0, 0, 0.8), inset -1px -1px 0 rgba(0, 0, 0, 0.5), inset 1px 1px 0 rgba(255, 255, 255, 0.2); }
+        .counter-box { background: rgba(10, 10, 10, 0.95); border: 2px solid #ffffff; color: #ffffff; padding: 6px 10px; font-family: 'Press Start 2P', cursive; font-size: 6px; box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.8), inset 0 0 10px rgba(255, 255, 255, 0.05); }
+        .chromatic-border { position: relative; }
+        .chromatic-border::before, .chromatic-border::after { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; border: 2px solid transparent; pointer-events: none; z-index: 10; }
+        .chromatic-border::before { border-color: rgba(255, 0, 0, 0.4); transform: translate(-3px, -1px); filter: blur(1px); }
+        .chromatic-border::after { border-color: rgba(0, 255, 255, 0.4); transform: translate(3px, 1px); filter: blur(1px); }
+        * { cursor: none !important; }
+        .custom-cursor { position: fixed; pointer-events: none; z-index: 10000; }
+        .cursor-triangle { width: 0; height: 0; border-left: 6px solid transparent; border-right: 6px solid transparent; border-bottom: 12px solid #ffffff; transform: translate(-6px, -2px) rotate(-30deg); filter: drop-shadow(0 0 2px rgba(255, 255, 255, 0.8)); }
+        .cursor-triangle-red { position: absolute; top: 0; left: 0; width: 0; height: 0; border-left: 6px solid transparent; border-right: 6px solid transparent; border-bottom: 12px solid rgba(255, 0, 0, 0.5); transform: translate(-8px, -3px) rotate(-30deg); filter: blur(1px); }
+        .cursor-triangle-cyan { position: absolute; top: 0; left: 0; width: 0; height: 0; border-left: 6px solid transparent; border-right: 6px solid transparent; border-bottom: 12px solid rgba(0, 255, 255, 0.5); transform: translate(-4px, -1px) rotate(-30deg); filter: blur(1px); }
+        @media (max-width: 768px) { .tools-grid { grid-template-columns: 1fr; } .tools-container { padding: 130px 16px 20px; } }
+    </style>
+</head>
+<body>
+    <div class="custom-cursor" id="customCursor">
+        <div class="cursor-triangle-red"></div>
+        <div class="cursor-triangle-cyan"></div>
+        <div class="cursor-triangle"></div>
+    </div>
+    <div class="hex-pattern"></div>
+    <div class="noise"></div>
+    <div class="scanlines"></div>
+    <div class="vhs-left"></div>
+    <div class="vhs-right"></div>
+    <div class="horizontal-line"></div>
+
+    <div class="nav-tabs">
+        <a class="nav-tab" href="index.html">HOME</a>
+        <a class="nav-tab" href="shots.html">SHOTS</a>
+        <a class="nav-tab" href="mods.html">MODS</a>
+        <a class="nav-tab active" href="tools.html">TOOLS</a>
+        <a class="nav-tab" href="credits.html">CREDITS</a>
+        <a class="nav-tab" href="contacts.html">CONTACTS</a>
+    </div>
+
+    <div class="page-title">MY TOOLS</div>
+
+    <div style="position: fixed; top: 75px; right: 20px; z-index: 10;">
+        <div class="counter-box chromatic-border">
+            <span style="color: #888;">TOOLS:</span>
+            <span id="toolCount" style="color: #fff;">3</span>
+        </div>
+    </div>
+
+    <div class="tools-container">
+        <div class="tools-grid">
+
+            <!-- Image Upscaler -->
+            <div class="tool-card chromatic-border">
+                <div class="card-header">
+                    <div class="card-title">IMAGE UPSCALER</div>
+                </div>
+                <div class="card-body">
+                    <div class="card-desc">
+                        Браузерный апскейлер изображений с различными алгоритмами:
+                        Nearest Neighbor, Bilinear, Bicubic, Lanczos, Catmull-Rom, Mitchell.
+                        Батч-режим, кастомные размеры, до ×4.
+                    </div>
+                    <div class="card-meta">
+                        <span>tech:</span> HTML5 Canvas · JS · client-side
+                    </div>
+                    <div class="card-tags">
+                        <span class="tag web">WEB</span>
+                        <span class="tag online">ONLINE</span>
+                    </div>
+                    <a class="card-btn" href="tools/image-upscaler/" target="_blank">OPEN</a>
+                </div>
+            </div>
+
+            <!-- Color Transfer -->
+            <div class="tool-card chromatic-border">
+                <div class="card-header">
+                    <div class="card-title">COLOR TRANSFER</div>
+                </div>
+                <div class="card-body">
+                    <div class="card-desc">
+                        Перенос цвета между изображениями в LAB-пространстве.
+                        Сохраняет luminance исходника, переносит цвет с референса.
+                        + Frame Interpolation для создания анимации.
+                    </div>
+                    <div class="card-meta">
+                        <span>tech:</span> Web Worker · LAB · Canvas API
+                    </div>
+                    <div class="card-tags">
+                        <span class="tag web">WEB</span>
+                        <span class="tag online">ONLINE</span>
+                    </div>
+                    <a class="card-btn" href="tools/color-transfer/" target="_blank">OPEN</a>
+                </div>
+            </div>
+
+            <!-- Image to Video (Python) -->
+            <div class="tool-card chromatic-border">
+                <div class="card-header">
+                    <div class="card-title">MP4 MERGER</div>
+                </div>
+                <div class="card-body">
+                    <div class="card-desc">
+                        Десктопное приложение (Python/Tkinter) для работы с видео:
+                        слияние MP4, создание видео из изображений, поворот видео,
+                        Smart Merge с разными разрешениями.
+                    </div>
+                    <div class="card-meta">
+                        <span>requires:</span> Python 3 · ffmpeg · moviepy
+                    </div>
+                    <div class="card-tags">
+                        <span class="tag python">PYTHON</span>
+                        <span class="tag download">DOWNLOAD</span>
+                    </div>
+                    <a class="card-btn" href="tools/image-to-video/" target="_blank">VIEW</a>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        const cursor = document.getElementById('customCursor');
+        document.addEventListener('mousemove', e => { if (cursor) { cursor.style.left = e.clientX + 'px'; cursor.style.top = e.clientY + 'px'; } });
+    </script>
+</body>
+</html>

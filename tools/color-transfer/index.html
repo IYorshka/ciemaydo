@@ -1,0 +1,1478 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IYORSHKA Tools</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+html, body, *, *::before, *::after {
+    cursor: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAZdEVYdFNvZnR3YXJlAHBhaW50Lm5ldCA0LjAuMjHxIGmVAAAADUlEQVQYV2P4//8/AwAI/AL+xW6gRwAAAABJRU5ErkJggg=='), none !important;
+}
+body {
+    font-family:'Press Start 2P',cursive;
+    font-size:17px;
+    line-height:1.6;
+    background:#0a0a0a;
+    min-height:100vh;
+    color:#fff;
+}
+.custom-cursor { position:fixed; pointer-events:none; z-index:10000; }
+.cursor-triangle {
+    width:0; height:0;
+    border-left:6px solid transparent;
+    border-right:6px solid transparent;
+    border-bottom:12px solid #fff;
+    transform:translate(-6px,-2px) rotate(-30deg);
+    filter:drop-shadow(0 0 2px rgba(255,255,255,0.8));
+}
+.cursor-triangle-red {
+    position:absolute; top:0; left:0;
+    width:0; height:0;
+    border-left:6px solid transparent;
+    border-right:6px solid transparent;
+    border-bottom:12px solid rgba(255,0,0,0.5);
+    transform:translate(-8px,-3px) rotate(-30deg);
+    filter:blur(1px);
+}
+.cursor-triangle-cyan {
+    position:absolute; top:0; left:0;
+    width:0; height:0;
+    border-left:6px solid transparent;
+    border-right:6px solid transparent;
+    border-bottom:12px solid rgba(0,255,255,0.5);
+    transform:translate(-4px,-1px) rotate(-30deg);
+    filter:blur(1px);
+}
+.hex-pattern {
+    position:fixed; top:-100%; left:0;
+    width:100%; height:200%;
+    z-index:1; opacity:0.15;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='97' viewBox='0 0 56 97'%3E%3Cpolygon points='28,0 56,16 56,48 56,80 28,97 0,80 0,48 0,16' fill='none' stroke='%23ffffff' stroke-width='1'/%3E%3C/svg%3E");
+    background-size:56px 97px;
+    animation:hexMoveDown 120s linear infinite;
+}
+@keyframes hexMoveDown { 0%{transform:translateY(0)} 100%{transform:translateY(50%)} }
+.side-light {
+    position:fixed; top:0; left:0;
+    width:100%; height:100%;
+    pointer-events:none; z-index:2;
+    background:linear-gradient(90deg,rgba(255,255,255,0.03) 0%,transparent 20%,transparent 80%,rgba(255,255,255,0.03) 100%);
+}
+.scanlines {
+    position:fixed; top:0; left:0;
+    width:100%; height:100%;
+    pointer-events:none; z-index:100;
+    background:repeating-linear-gradient(0deg, rgba(0,0,0,0.15),rgba(0,0,0,0.15) 1px, transparent 1px, transparent 2px);
+}
+.noise {
+    position:fixed; top:0; left:0;
+    width:100%; height:100%;
+    pointer-events:none; z-index:99; opacity:0.03;
+    background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+}
+.vhs-left,.vhs-right { position:fixed; top:0; width:120px; height:100%; z-index:4; pointer-events:none; overflow:hidden; }
+.vhs-left { left:0; }
+.vhs-right { right:0; }
+.vhs-left::before,.vhs-right::before {
+    content:''; position:absolute; top:0; left:0;
+    width:100%; height:100%;
+    background:repeating-linear-gradient(0deg, transparent 0px, transparent 2px, rgba(255,0,0,0.03) 2px, rgba(255,0,0,0.03) 4px, transparent 4px, transparent 8px, rgba(0,255,255,0.03) 8px, rgba(0,255,255,0.03) 10px);
+    animation:vhsScroll 0.5s linear infinite;
+}
+.vhs-left::after {
+    content:''; position:absolute; top:0; left:0;
+    width:100%; height:100%;
+    background:linear-gradient(90deg,rgba(255,0,0,0.1) 0%,rgba(0,255,255,0.05) 30%,transparent 100%);
+    animation:vhsGlitch 3s ease-in-out infinite;
+}
+.vhs-right::after {
+    content:''; position:absolute; top:0; right:0;
+    width:100%; height:100%;
+    background:linear-gradient(-90deg,rgba(0,255,255,0.1) 0%,rgba(255,0,0,0.05) 30%,transparent 100%);
+    animation:vhsGlitch 3s ease-in-out infinite;
+}
+@keyframes vhsScroll { 0%{transform:translateY(0)} 100%{transform:translateY(10px)} }
+@keyframes vhsGlitch {
+    0%,100%{opacity:0.3;transform:translateX(0)}
+    10%{opacity:0.5;transform:translateX(2px)}
+    20%{opacity:0.2;transform:translateX(-1px)}
+    30%{opacity:0.6;transform:translateX(3px)}
+    40%{opacity:0.3;transform:translateX(0)}
+    50%{opacity:0.4;transform:translateX(-2px)}
+    60%{opacity:0.2;transform:translateX(1px)}
+    70%{opacity:0.5;transform:translateX(-3px)}
+    80%{opacity:0.3;transform:translateX(2px)}
+    90%{opacity:0.4;transform:translateX(-1px)}
+}
+.vhs-bar {
+    position:fixed; height:3px; width:100%; left:0;
+    z-index:4; pointer-events:none;
+    background:linear-gradient(90deg,rgba(255,0,0,0.2) 0%,rgba(255,255,255,0.1) 50%,rgba(0,255,255,0.2) 100%);
+    animation:vhsBarMove 8s linear infinite; opacity:0.4;
+}
+@keyframes vhsBarMove { 0%{top:-3px} 100%{top:100%} }
+.horizontal-line {
+    position:fixed; top:70px; left:0;
+    width:100%; height:2px;
+    background:#fff; z-index:9;
+    box-shadow:0 0 10px rgba(255,255,255,0.3);
+}
+.horizontal-line::before,.horizontal-line::after {
+    content:''; position:absolute; left:0; width:100%; height:2px;
+}
+.horizontal-line::before { top:-1px; background:rgba(255,0,0,0.3); }
+.horizontal-line::after  { top:1px;  background:rgba(0,255,255,0.3); }
+
+/* Site Nav */
+.site-tabs { position:fixed; top:20px; left:20px; z-index:10; display:flex; gap:6px; flex-wrap:wrap; max-width:calc(100vw - 40px); }
+.site-tab { background:rgba(10,10,10,0.95); border:2px solid #fff; color:#fff; padding:7px 12px; font-family:'Press Start 2P',cursive; font-size:8px; cursor:pointer; transition:all 0.15s ease-out; box-shadow:3px 3px 0 rgba(0,0,0,0.8), inset -1px -1px 0 rgba(0,0,0,0.5), inset 1px 1px 0 rgba(255,255,255,0.1); letter-spacing:1px; position:relative; clip-path:polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 0 100%); user-select:none; text-decoration:none; }
+.site-tab::before { content:''; position:absolute; top:0; right:0; width:10px; height:10px; border-left:2px solid #fff; border-bottom:2px solid #fff; transform:rotate(-45deg) translate(4px,-4px); background:transparent; }
+.site-tab:hover { transform:translateY(-4px); background:rgba(30,30,30,0.95); box-shadow:3px 7px 0 rgba(0,0,0,0.8), inset -1px -1px 0 rgba(0,0,0,0.5), inset 1px 1px 0 rgba(255,255,255,0.2); }
+.site-tab.active { background:rgba(50,50,50,0.95); transform:translateY(-2px); box-shadow:3px 5px 0 rgba(0,0,0,0.8), inset -1px -1px 0 rgba(0,0,0,0.5), inset 1px 1px 0 rgba(255,255,255,0.3); }
+/* Tool Nav */
+.tool-tabs { position:fixed; top:70px; left:50%; transform:translateX(-50%); z-index:10; display:flex; gap:8px; flex-wrap:wrap; justify-content:center; max-width:90vw; }
+.tool-tab {
+    background:rgba(10,10,10,0.95);
+    border:2px solid #fff; color:#fff;
+    padding:10px 18px;
+    font-family:'Press Start 2P',cursive;
+    font-size:17px; cursor:pointer;
+    transition:all 0.15s ease-out;
+    box-shadow:3px 3px 0 rgba(0,0,0,0.8), inset -1px -1px 0 rgba(0,0,0,0.5), inset 1px 1px 0 rgba(255,255,255,0.1);
+    letter-spacing:1px; position:relative;
+    clip-path:polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 0 100%);
+    user-select:none;
+}
+.tool-tab::before {
+    content:''; position:absolute; top:0; right:0;
+    width:14px; height:14px;
+    border-left:2px solid #fff; border-bottom:2px solid #fff;
+    transform:rotate(-45deg) translate(5px,-5px);
+}
+.tool-tab:hover { transform:translateY(-4px); background:rgba(30,30,30,0.95); box-shadow:3px 7px 0 rgba(0,0,0,0.8), inset -1px -1px 0 rgba(0,0,0,0.5), inset 1px 1px 0 rgba(255,255,255,0.2); }
+.tool-tab:active { transform:translateY(-2px); box-shadow:3px 5px 0 rgba(0,0,0,0.8), inset -1px -1px 0 rgba(0,0,0,0.5), inset 1px 1px 0 rgba(255,255,255,0.2); }
+.tool-tab.active { background:rgba(50,50,50,0.95); transform:translateY(-2px); box-shadow:3px 5px 0 rgba(0,0,0,0.8), inset -1px -1px 0 rgba(0,0,0,0.5), inset 1px 1px 0 rgba(255,255,255,0.3); }
+.tool-tab:hover::after {
+    content:''; position:absolute; top:0; left:0; right:0; bottom:0;
+    box-shadow:-2px 0 0 rgba(255,0,0,0.3), 2px 0 0 rgba(0,255,255,0.3);
+    pointer-events:none;
+}
+
+/* Main */
+.main-container {
+    position:fixed; top:85px; left:50%;
+    transform:translateX(-50%); z-index:5;
+    width:90%; max-width:1200px;
+    height:calc(100vh - 100px);
+    display:flex; flex-direction:column;
+    align-items:center;
+    overflow-y:auto; padding-bottom:20px;
+}
+.main-container::-webkit-scrollbar { width:4px; }
+.main-container::-webkit-scrollbar-track { background:#0a0a0a; }
+.main-container::-webkit-scrollbar-thumb { background:#fff; box-shadow:-1px 0 0 rgba(255,0,0,0.3), 1px 0 0 rgba(0,255,255,0.3); }
+
+.tab-content { display:none; width:100%; flex-direction:column; align-items:center; }
+.tab-content.active { display:flex; }
+
+/* Window */
+.window {
+    background:rgba(10,10,10,0.95);
+    border:3px solid #fff;
+    box-shadow:8px 8px 0 rgba(0,0,0,0.8), -2px -2px 0 rgba(255,255,0,0.1), inset 0 0 30px rgba(255,255,255,0.02);
+    width:100%; max-width:1000px; position:relative;
+}
+.window-header {
+    background:linear-gradient(180deg,#1a1a1a 0%,#0d0d0d 100%);
+    border-bottom:2px solid #fff;
+    padding:8px 12px; display:flex;
+    align-items:center; justify-content:center;
+}
+.window-title {
+    font-size:17px; color:#000;
+    text-shadow:-1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff, 1px 1px 0 #fff;
+    letter-spacing:2px;
+}
+.window-content { padding:20px; position:relative; }
+.chromatic-border { position:relative; }
+.chromatic-border::before,.chromatic-border::after {
+    content:''; position:absolute; top:0; left:0; right:0; bottom:0;
+    border:2px solid transparent; pointer-events:none; z-index:10;
+}
+.chromatic-border::before { border-color:rgba(255,0,0,0.4); transform:translate(-3px,-1px); filter:blur(1px); }
+.chromatic-border::after { border-color:rgba(0,255,255,0.4); transform:translate(3px,1px); filter:blur(1px); }
+
+.drop-row { display:flex; gap:15px; width:100%; }
+.drop-zone-wrap { flex:1; min-width:0; }
+.drop-zone {
+    border:2px dashed #fff; padding:40px 20px;
+    text-align:center; font-size:17px; cursor:pointer;
+    background:rgba(0,0,0,0.5); transition:all 0.2s; letter-spacing:1px;
+}
+.drop-zone:hover,.drop-zone.dragover {
+    background:rgba(255,255,255,0.05); border-color:#888;
+    box-shadow:inset 0 0 20px rgba(255,255,255,0.05);
+}
+.drop-zone.has-image { padding:8px; }
+.drop-zone .thumb { max-width:100%; max-height:120px; display:block; margin:5px auto 0; border:1px solid #444; }
+.drop-zone .dz-label {     font-size:17px; color:#555; margin-bottom:6px; letter-spacing:1px; }
+.drop-zone .dz-info {     font-size:17px; color:#666; margin-top:4px; }
+
+.btn {
+    background:linear-gradient(180deg,#1a1a1a 0%,#0d0d0d 50%,#1a1a1a 100%);
+    border:2px solid #fff; color:#fff;
+    padding:14px 28px;
+    font-family:'Press Start 2P',cursive; font-size:17px; cursor:pointer;
+    transition:all 0.1s;
+    box-shadow:4px 4px 0 rgba(0,0,0,0.8), inset -2px -2px 0 rgba(0,0,0,0.5), inset 2px 2px 0 rgba(255,255,255,0.1);
+    letter-spacing:2px; position:relative; text-transform:uppercase;
+}
+.btn:hover {
+    background:linear-gradient(180deg,#2a2a2a 0%,#1a1a1a 50%,#2a2a2a 100%);
+    box-shadow:2px 2px 0 rgba(0,0,0,0.8), inset -2px -2px 0 rgba(0,0,0,0.5), inset 2px 2px 0 rgba(255,255,255,0.2);
+    transform:translate(2px,2px);
+}
+.btn:active {
+    box-shadow:0px 0px 0 rgba(0,0,0,0.8), inset -2px -2px 0 rgba(0,0,0,0.5), inset 2px 2px 0 rgba(255,255,255,0.2);
+    transform:translate(4px,4px);
+}
+.btn:disabled {
+    opacity:0.4; transform:none !important;
+    box-shadow:4px 4px 0 rgba(0,0,0,0.8), inset -2px -2px 0 rgba(0,0,0,0.5), inset 2px 2px 0 rgba(255,255,255,0.1) !important;
+}
+.btn-sm { padding:8px 16px;     font-size:17px; }
+.controls-center { text-align:center; margin:15px 0; }
+
+.progress-container {
+    width:100%; height:20px;
+    border:2px solid #fff; background:#0a0a0a;
+    margin:10px 0;
+    box-shadow:inset 0 0 10px rgba(0,0,0,0.8);
+    display:none; overflow:hidden;
+}
+.progress-container.active { display:block; }
+.progress-bar {
+    height:100%; width:0%;
+    background:linear-gradient(90deg,#1a1a1a,#fff);
+    transition:width 0.15s; position:relative;
+}
+.progress-bar::after {
+    content:''; position:absolute; top:0; left:0; right:0; bottom:0;
+    background:linear-gradient(90deg,rgba(255,0,0,0.2),rgba(0,255,255,0.2));
+}
+.progress-label { font-size:17px; color:#888; text-align:center; margin-top:4px; min-height:20px; letter-spacing:1px; }
+.status-text { font-size:17px; color:#888; text-align:center; margin:8px 0; letter-spacing:1px; min-height:25px; }
+
+.preview-container {
+    display:flex; gap:10px; margin:15px 0;
+    flex-wrap:wrap; justify-content:center;
+}
+.preview-box {
+    flex:1; min-width:200px;
+    background:rgba(0,0,0,0.3); border:1px solid #333;
+    padding:8px; text-align:center;
+}
+.preview-box canvas, .preview-box img {
+    width:100%; height:auto;
+    max-height:60vh; object-fit:contain;
+    display:block; margin:5px auto; border:1px solid #444;
+}
+.preview-label { font-size:17px; color:#888; letter-spacing:1px; margin-bottom:6px; }
+.size-info { font-size:17px; color:#666; text-align:center; margin:6px 0; }
+
+.download-area { display:none; text-align:center; margin-top:15px; padding-top:15px; border-top:1px solid #333; }
+.download-area.active { display:block; }
+
+.counter-box {
+    background:rgba(10,10,10,0.95); border:2px solid #fff; color:#fff;
+    padding:8px 12px; font-family:'Press Start 2P',cursive;     font-size:17px;
+    box-shadow:4px 4px 0 rgba(0,0,0,0.8);
+}
+.time-display { position:fixed; bottom:20px; right:20px; z-index:10; }
+.swap-hint {     font-size:17px; color:#555; text-align:center; margin-top:4px; cursor:pointer; text-decoration:underline dotted; }
+.swap-hint:hover { color:#888; }
+
+/* Interpolation specific */
+.frame-grid {
+    display:flex; flex-wrap:wrap; gap:10px;
+    margin:10px 0; padding:12px;
+    border:1px solid #333; min-height:100px;
+    justify-content:center; align-items:center;
+}
+.frame-grid .frame-thumb {
+    position:relative; width:160px; height:160px;
+    border:2px solid #444; overflow:hidden;
+    cursor:grab; transition:all 0.15s;
+}
+.frame-grid .frame-thumb:active { cursor:grabbing; }
+.frame-grid .frame-thumb:hover { border-color:#fff; transform:scale(1.05); }
+.frame-grid .frame-thumb.drag-over { border-color:#0ff; box-shadow:0 0 15px rgba(0,255,255,0.3); }
+.frame-grid .frame-thumb img { width:100%; height:100%; object-fit:cover; display:block; }
+.frame-grid .frame-thumb .frame-idx {
+    position:absolute; bottom:0; left:0; right:0;
+    background:rgba(0,0,0,0.8); font-size:17px;
+    text-align:center; padding:4px; color:#aaa;
+    pointer-events:none;
+}
+.frame-grid .frame-thumb .frame-del {
+    position:absolute; top:0; right:0;
+    width:24px; height:24px; background:rgba(255,0,0,0.7);
+    font-size:17px; line-height:24px; text-align:center;
+    cursor:pointer; display:none; z-index:2;
+}
+.frame-grid .frame-thumb:hover .frame-del { display:block; }
+
+.param-row {
+    display:flex; gap:12px; flex-wrap:wrap;
+    justify-content:center; align-items:flex-end;
+    margin:10px 0;
+}
+.param-group {
+    display:flex; flex-direction:column; gap:4px; align-items:center;
+}
+.param-label {     font-size:17px; color:#555; letter-spacing:1px; }
+.param-group input[type=number] {
+    background:#0a0a0a; border:2px solid #fff; color:#fff;
+    padding:12px 14px; font-family:'Press Start 2P',cursive; font-size:17px;
+    box-shadow:3px 3px 0 rgba(0,0,0,0.8);
+    width:120px; text-align:center;
+}
+.param-group input[type=number]:focus { outline:none; box-shadow:3px 3px 0 rgba(0,0,0,0.8), 0 0 0 1px rgba(255,255,255,0.3); }
+.param-group select {
+    background:#0a0a0a; border:2px solid #fff; color:#fff;
+    padding:12px 14px; font-family:'Press Start 2P',cursive; font-size:17px;
+    box-shadow:3px 3px 0 rgba(0,0,0,0.8);
+    min-width:200px; cursor:pointer;
+    appearance:none;-webkit-appearance:none;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='white'/%3E%3C/svg%3E");
+    background-repeat:no-repeat; background-position:right 12px center; padding-right:30px;
+}
+
+.interp-preview-box {
+    position:relative;
+    background:rgba(0,0,0,0.3); border:1px solid #333;
+    padding:8px; text-align:center;
+    margin:10px 0;
+}
+.interp-preview-box canvas {
+    width:100%; height:auto;
+    max-height:55vh; object-fit:contain;
+    display:block; margin:0 auto; border:1px solid #444;
+}
+
+.playback-bar {
+    display:flex; gap:10px; align-items:center;
+    justify-content:center; margin:8px 0; flex-wrap:wrap;
+}
+.playback-bar .btn-sm { padding:8px 16px; font-size:17px; }
+.timeline-info { font-size:17px; color:#888; letter-spacing:1px; }
+
+.rec-box {
+    font-size:17px; color:#888; margin:8px 0;
+    padding:12px; border:1px solid #333;
+    line-height:1.8;
+}
+.rec-box b { color:#fff; }
+
+@media (max-width:768px) {
+    .drop-row { flex-direction:column; }
+    .drop-zone { padding:20px 10px; }
+    .drop-zone .thumb { max-height:80px; }
+    .window-content { padding:10px; }
+    .preview-box { min-width:120px; }
+    .btn { padding:10px 20px;     font-size:17px; }
+    .nav-tab { padding:8px 14px;     font-size:17px; }
+    .frame-grid .frame-thumb { width:120px; height:120px; }
+    .param-group input[type=number] { width:90px; }
+}
+</style>
+</head>
+<body>
+
+<div class="custom-cursor" id="customCursor">
+    <div class="cursor-triangle-red"></div>
+    <div class="cursor-triangle-cyan"></div>
+    <div class="cursor-triangle"></div>
+</div>
+
+<div class="hex-pattern"></div>
+<div class="side-light"></div>
+<div class="noise"></div>
+<div class="scanlines"></div>
+<div class="vhs-left"></div>
+<div class="vhs-right"></div>
+<div class="vhs-bar"></div>
+<div class="horizontal-line"></div>
+
+<div class="site-tabs">
+    <a class="site-tab" href="../index.html">HOME</a>
+    <a class="site-tab" href="../shots.html">SHOTS</a>
+    <a class="site-tab" href="../mods.html">MODS</a>
+    <a class="site-tab" href="../tools.html">TOOLS</a>
+    <a class="site-tab" href="../credits.html">CREDITS</a>
+    <a class="site-tab" href="../contacts.html">CONTACTS</a>
+</div>
+<div class="tool-tabs">
+    <div class="tool-tab active" data-tab="color">COLOR TRANSFER</div>
+    <div class="tool-tab" data-tab="interp">FRAME INTERPOLATION</div>
+</div>
+
+<div class="time-display">
+    <div class="counter-box chromatic-border">
+        <div style="display:flex;flex-direction:column;gap:4px;text-align:center;">
+            <span style="color:#555;    font-size:17px;">TIME</span>
+            <span id="currentTime" style="color:#fff;font-size:17px;">00:00:00</span>
+            <span id="currentDate" style="color:#888;font-size:17px;">00.00.0000</span>
+        </div>
+    </div>
+</div>
+
+<div class="main-container">
+
+<!-- ========== TAB: COLOR TRANSFER ========== -->
+<div id="tab-color" class="tab-content active">
+
+    <div class="window chromatic-border" style="margin-bottom:15px;">
+        <div class="window-header">
+            <div class="window-title">IMAGE INPUT</div>
+        </div>
+        <div class="window-content">
+            <div class="drop-row">
+                <div class="drop-zone-wrap">
+                    <div class="drop-zone chromatic-border" id="dzBig">
+                        <div class="dz-label">8K SOURCE (WRONG COLORS)</div>
+                        <div class="upload-icon" style="font-size:17px;opacity:0.5;margin-bottom:8px;">⬆</div>
+                        <p style="font-size:17px;letter-spacing:1px;">DROP OR CLICK</p>
+                        <p class="dz-info" id="dzBigInfo">—</p>
+                        <input type="file" id="fileBig" accept="image/*" style="display:none;">
+                    </div>
+                </div>
+                <div class="drop-zone-wrap">
+                    <div class="drop-zone chromatic-border" id="dzRef">
+                        <div class="dz-label">COLOR REF (CORRECT COLORS)</div>
+                        <div class="upload-icon" style="font-size:17px;opacity:0.5;margin-bottom:8px;">⬆</div>
+                        <p style="font-size:17px;letter-spacing:1px;">DROP OR CLICK</p>
+                        <p class="dz-info" id="dzRefInfo">—</p>
+                        <input type="file" id="fileRef" accept="image/*" style="display:none;">
+                    </div>
+                </div>
+            </div>
+            <div class="swap-hint" id="swapHint">⇄ SWAP IMAGES</div>
+        </div>
+    </div>
+
+    <div class="window chromatic-border">
+        <div class="window-header">
+            <div class="window-title">COLOR TRANSFER</div>
+        </div>
+        <div class="window-content">
+            <div class="controls-center">
+                <button class="btn" id="btnTransfer" disabled>TRANSFER COLOR</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="window chromatic-border" style="margin-top:15px;">
+        <div class="window-header">
+            <div class="window-title">OUTPUT</div>
+        </div>
+        <div class="window-content">
+            <div class="progress-container" id="progressContainer">
+                <div class="progress-bar" id="progressBar"></div>
+            </div>
+            <div class="progress-label" id="progressLabel"></div>
+            <div class="status-text" id="statusText">Load both images to begin</div>
+            <div class="preview-container">
+                <div class="preview-box">
+                    <div class="preview-label">BEFORE</div>
+                    <canvas id="previewBefore"></canvas>
+                    <div class="size-info" id="beforeSize">—</div>
+                </div>
+                <div class="preview-box">
+                    <div class="preview-label">AFTER</div>
+                    <canvas id="previewAfter"></canvas>
+                    <div class="size-info" id="afterSize">—</div>
+                </div>
+            </div>
+            <div class="download-area" id="downloadArea">
+                <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;align-items:center;">
+                    <button class="btn" id="downloadBtn">⬇ PNG</button>
+                    <button class="btn" id="downloadJpgBtn">⬇ JPEG</button>
+                    <div style="display:flex;flex-direction:column;gap:2px;align-items:center;margin-left:6px;">
+                        <span style="    font-size:17px;color:#555;letter-spacing:1px;">JPEG QUALITY</span>
+                        <input type="range" id="jpgQuality" min="1" max="100" value="95" style="width:100px;accent-color:#fff;">
+                        <span id="jpgQualityLabel" style="font-size:17px;color:#888;">95%</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- ========== TAB: FRAME INTERPOLATION ========== -->
+<div id="tab-interp" class="tab-content">
+
+    <div class="window chromatic-border" style="margin-bottom:15px;">
+        <div class="window-header">
+            <div class="window-title">KEYFRAMES</div>
+        </div>
+        <div class="window-content">
+            <div class="controls-center" style="margin-bottom:10px;">
+                <button class="btn btn-sm" id="btnAddFrames">📁 ADD IMAGES</button>
+                <input type="file" id="fileFrames" accept="image/*" multiple style="display:none;">
+            </div>
+            <div class="frame-grid" id="frameGrid">
+                <span style="font-size:17px;color:#555;">Drop or add keyframe images (2+)</span>
+            </div>
+            <div style="text-align:center;margin-top:8px;">
+                <span id="frameCount" style="font-size:17px;color:#666;">0 frames</span>
+                <button class="btn btn-sm" id="btnClearFrames" style="margin-left:8px;padding:6px 12px;font-size:17px;border-color:#f44;">✕ CLEAR</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="window chromatic-border">
+        <div class="window-header">
+            <div class="window-title">PARAMETERS</div>
+        </div>
+        <div class="window-content">
+            <div class="param-row">
+                <div class="param-group">
+                    <span class="param-label">HOLD (frames)</span>
+                    <input type="number" id="holdFrames" value="30" min="0" max="300">
+                </div>
+                <div class="param-group">
+                    <span class="param-label">TRANSITION (frames)</span>
+                    <input type="number" id="transFrames" value="15" min="1" max="300">
+                </div>
+                <div class="param-group">
+                    <span class="param-label">FPS</span>
+                    <input type="number" id="interpFps" value="30" min="1" max="120">
+                </div>
+                <div class="param-group">
+                    <span class="param-label">EASING</span>
+                    <select id="easingSelect">
+                        <option value="linear">LINEAR</option>
+                        <option value="ease-in-out">EASE IN-OUT</option>
+                        <option value="ease-out">EASE OUT</option>
+                    </select>
+                </div>
+            </div>
+            <div class="controls-center">
+                <button class="btn" id="btnBuildAnim" disabled>BUILD ANIMATION</button>
+            </div>
+            <div style="border-top:1px solid #333;margin-top:15px;padding-top:15px;">
+                <div style="text-align:center;margin-bottom:10px;">
+                    <span style="font-size:17px;color:#888;letter-spacing:1px;">PRESETS</span>
+                </div>
+                <div class="param-row">
+                    <div class="param-group">
+                        <span class="param-label">NAME</span>
+                        <input type="text" id="presetName" value="" placeholder="MY PRESET" style="background:#0a0a0a;border:2px solid #fff;color:#fff;padding:12px 14px;font-family:'Press Start 2P',cursive;font-size:17px;box-shadow:3px 3px 0 rgba(0,0,0,0.8);width:200px;text-align:center;">
+                    </div>
+                    <div class="param-group">
+                        <span class="param-label">LOAD PRESET</span>
+                        <select id="presetSelect" style="background:#0a0a0a;border:2px solid #fff;color:#fff;padding:12px 14px;font-family:'Press Start 2P',cursive;font-size:17px;box-shadow:3px 3px 0 rgba(0,0,0,0.8);min-width:200px;cursor:pointer;appearance:none;-webkit-appearance:none;background-image:url('data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%2710%27 height=%276%27%3E%3Cpath d=%27M0 0l5 6 5-6z%27 fill=%27white%27/%3E%3C/svg%3E');background-repeat:no-repeat;background-position:right 12px center;padding-right:30px;">
+                            <option value="">— SAVED PRESETS —</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="controls-center" style="margin:8px 0;">
+                    <button class="btn btn-sm" id="btnSavePreset" style="font-size:17px;padding:10px 20px;">💾 SAVE</button>
+                    <button class="btn btn-sm" id="btnLoadPreset" style="font-size:17px;padding:10px 20px;">📂 LOAD</button>
+                    <button class="btn btn-sm" id="btnDeletePreset" style="font-size:17px;padding:10px 20px;border-color:#f44;">✕ DELETE</button>
+                </div>
+            </div>
+            <div class="rec-box" id="recBox">
+                <div id="recText">Add at least 2 keyframes to see recommendations.</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="window chromatic-border" style="margin-top:15px;">
+        <div class="window-header">
+            <div class="window-title">PREVIEW + EXPORT</div>
+        </div>
+        <div class="window-content">
+            <div class="progress-container" id="interpProgress">
+                <div class="progress-bar" id="interpProgressBar"></div>
+            </div>
+            <div class="interp-preview-box">
+                <canvas id="animPreview"></canvas>
+            </div>
+            <div class="status-text" id="interpStatus">Build an animation to preview</div>
+            <div class="playback-bar">
+                <button class="btn btn-sm" id="btnPlay">▶ PLAY</button>
+                <span class="timeline-info" id="timelineInfo">0 / 0</span>
+            </div>
+            <div style="margin-top:16px;border-top:1px solid #333;padding-top:14px;">
+                <div style="display:flex;flex-direction:column;align-items:center;gap:10px;">
+                    <div style="display:flex;align-items:center;gap:10px;">
+                        <span style="color:#888;min-width:40px;">MP4</span>
+                        <button class="btn" id="btnSaveMp4As">💾 SAVE AS...</button>
+                        <button class="btn" id="btnExportMp4">⬇ SAVE</button>
+                    </div>
+                    <div style="display:flex;align-items:center;gap:10px;">
+                        <span style="color:#888;min-width:40px;">GIF</span>
+                        <button class="btn" id="btnSaveGifAs">💾 SAVE AS...</button>
+                        <button class="btn" id="btnExportGif">⬇ SAVE</button>
+                    </div>
+                </div>
+                <div style="font-size:17px;color:#555;margin-top:10px;line-height:1.8;text-align:center;">
+                    WebM fallback if browser lacks support: <span style="color:#fff;">ffmpeg -i output.webm output.mp4</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/gif.js@0.2.0/dist/gif.js"></script>
+<script>
+// ---- Web Worker (color transfer) ----
+const workerCode = `
+var Xn = 0.95047, Yn = 1.0, Zn = 1.08883;
+var toLinearLUT = new Float64Array(256);
+for (var li = 0; li < 256; li++) {
+    var lv = li / 255;
+    toLinearLUT[li] = lv <= 0.04045 ? lv / 12.92 : Math.pow((lv + 0.055) / 1.055, 2.4);
+}
+function labf(t) { return t > 0.008856 ? Math.pow(t, 1/3) : 7.787 * t + 16/116; }
+function labfInv(t) { var t3 = t*t*t; return t3 > 0.008856 ? t3 : (t - 16/116) / 7.787; }
+function linearToSrgb(v) { return v <= 0.0031308 ? 12.92 * v : 1.055 * Math.pow(v, 1/2.4) - 0.055; }
+function rgbToLab(r, g, b) {
+    var rL = toLinearLUT[r], gL = toLinearLUT[g], bL = toLinearLUT[b];
+    var x = 0.4124564 * rL + 0.3575761 * gL + 0.1804375 * bL;
+    var y = 0.2126729 * rL + 0.7151522 * gL + 0.0721750 * bL;
+    var z = 0.0193339 * rL + 0.1191920 * gL + 0.9503041 * bL;
+    var fx = labf(x / Xn), fy = labf(y / Yn), fz = labf(z / Zn);
+    return [116 * fy - 16, 500 * (fx - fy), 200 * (fy - fz)];
+}
+function labToRgb(L, a, b) {
+    var fy = (L + 16) / 116, fx = a / 500 + fy, fz = fy - b / 200;
+    var x = Xn * labfInv(fx), y = Yn * labfInv(fy), z = Zn * labfInv(fz);
+    var rL = 3.2404542 * x - 1.5371385 * y - 0.4985314 * z;
+    var gL = -0.9692660 * x + 1.8760108 * y + 0.0415560 * z;
+    var bL = 0.0556434 * x - 0.2040259 * y + 1.0572252 * z;
+    function clamp(v) { return v < 0 ? 0 : v > 1 ? 1 : v; }
+    return [ Math.round(linearToSrgb(clamp(rL)) * 255), Math.round(linearToSrgb(clamp(gL)) * 255), Math.round(linearToSrgb(clamp(bL)) * 255) ];
+}
+self.onmessage = function(e) {
+    var msg = e.data;
+    var bigData = new Uint8ClampedArray(msg.bigBuf);
+    var upData = new Uint8ClampedArray(msg.refUpscaledBuf);
+    var bigW = msg.bigW, bigH = msg.bigH;
+    var bigLen = bigW * bigH;
+    var reportEvery = Math.max(1, Math.floor(bigLen / 100));
+    var i, off, c;
+    for (i = 0; i < bigLen; i++) {
+        off = i * 4;
+        c = rgbToLab(bigData[off], bigData[off+1], bigData[off+2]);
+        var LL = c[0];
+        c = rgbToLab(upData[off], upData[off+1], upData[off+2]);
+        var rgb = labToRgb(LL, c[1], c[2]);
+        bigData[off] = rgb[0]; bigData[off+1] = rgb[1]; bigData[off+2] = rgb[2];
+        if (i % reportEvery === 0) self.postMessage({ type:'progress', pct:Math.floor(i/bigLen*100) });
+    }
+    self.postMessage({ type:'done', buf:bigData.buffer, width:bigW, height:bigH }, [bigData.buffer]);
+};
+`;
+
+// ---- Main ----
+(function() {
+    'use strict';
+
+    const $ = id => document.getElementById(id);
+
+    // Cursor
+    const cursor = $('customCursor');
+    document.addEventListener('mousemove', e => { if (cursor) { cursor.style.left = e.clientX + 'px'; cursor.style.top = e.clientY + 'px'; } });
+
+    // ---- Tab switching ----
+    document.querySelectorAll('.tool-tab').forEach(tab => {
+        tab.addEventListener('click', function() {
+            document.querySelectorAll('.tool-tab').forEach(t => t.classList.remove('active'));
+            this.classList.add('active');
+            document.querySelectorAll('.tab-content').forEach(tc => tc.classList.remove('active'));
+            const t = $( 'tab-' + this.dataset.tab );
+            if (t) t.classList.add('active');
+        });
+    });
+
+    // ==============================
+    //  COLOR TRANSFER (existing)
+    // ==============================
+    var worker = null;
+    let bigImage = null, refImage = null;
+    let resultBlob = null;
+
+    const dzBig = $('dzBig'), dzRef = $('dzRef');
+    const fbBig = $('fileBig'), fbRef = $('fileRef');
+    const dzBigInfo = $('dzBigInfo'), dzRefInfo = $('dzRefInfo');
+
+    function setupDropZone(dz, input, infoEl) {
+        dz.addEventListener('click', () => input.click());
+        dz.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('dragover'); });
+        dz.addEventListener('dragleave', () => dz.classList.remove('dragover'));
+        dz.addEventListener('drop', e => { e.preventDefault(); dz.classList.remove('dragover'); if (e.dataTransfer.files.length) loadFile(e.dataTransfer.files[0], dz, input, infoEl); });
+        input.addEventListener('change', () => { if (input.files.length) loadFile(input.files[0], dz, input, infoEl); });
+    }
+    setupDropZone(dzBig, fbBig, dzBigInfo);
+    setupDropZone(dzRef, fbRef, dzRefInfo);
+
+    function loadFile(file, dz, input, infoEl) {
+        if (!file || !file.type.startsWith('image/')) return;
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const img = new Image();
+            img.onload = function() {
+                infoEl.textContent = img.width + 'x' + img.height + ' - ' + (file.size/1024/1024).toFixed(1) + 'MB';
+                const existing = dz.querySelector('.thumb');
+                if (existing) existing.remove();
+                const thumb = document.createElement('img');
+                thumb.className = 'thumb'; thumb.src = e.target.result;
+                dz.appendChild(thumb); dz.classList.add('has-image');
+                if (dz === dzBig) { bigImage = img; resultBlob = null; $('previewBefore').getContext('2d').clearRect(0,0,1,1); $('previewAfter').getContext('2d').clearRect(0,0,1,1); $('downloadArea').classList.remove('active'); }
+                else { refImage = img; }
+                updateUI();
+            };
+            img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+    }
+
+    $('swapHint').addEventListener('click', () => {
+        if (!bigImage && !refImage) return;
+        var tmp = bigImage; bigImage = refImage; refImage = tmp;
+        function swapDZ(dz1, dz2, info1, info2) {
+            var t1 = dz1.querySelector('.thumb'), t2 = dz2.querySelector('.thumb');
+            var i1 = info1.textContent, i2 = info2.textContent;
+            if (t1) { dz2.appendChild(t1); dz2.classList.add('has-image'); } else dz2.classList.remove('has-image');
+            if (t2) { dz1.appendChild(t2); dz1.classList.add('has-image'); } else dz1.classList.remove('has-image');
+            info1.textContent = i2; info2.textContent = i1;
+        }
+        swapDZ(dzBig, dzRef, dzBigInfo, dzRefInfo);
+        updateUI();
+    });
+
+    function updateUI() {
+        const ready = bigImage && refImage;
+        $('btnTransfer').disabled = !ready;
+        $('statusText').textContent = ready ? 'Source: ' + bigImage.width + 'x' + bigImage.height + ' | Ref: ' + refImage.width + 'x' + refImage.height : 'Load both images to begin';
+        if (bigImage) {
+            $('beforeSize').textContent = bigImage.width + 'x' + bigImage.height;
+            const c = $('previewBefore');
+            const maxP = 400;
+            const r = Math.min(maxP / bigImage.width, maxP / bigImage.height);
+            c.width = Math.round(bigImage.width * r);
+            c.height = Math.round(bigImage.height * r);
+            c.getContext('2d').drawImage(bigImage, 0, 0, c.width, c.height);
+        }
+    }
+
+    const progCont = $('progressContainer'), progBar = $('progressBar');
+    const statusText = $('statusText'), progLabel = $('progressLabel');
+
+    function setStatus(msg, err) { statusText.textContent = msg; statusText.style.color = err ? '#ff4444' : '#888'; }
+    function updateProgress(pct) { progCont.classList.add('active'); progBar.style.width = pct + '%'; }
+
+    const btnTransfer = $('btnTransfer');
+    let isProcessing = false;
+
+    btnTransfer.addEventListener('click', async () => {
+        if (isProcessing) return;
+        if (!bigImage || !refImage) { setStatus('Load both images first', true); return; }
+        isProcessing = true;
+        btnTransfer.disabled = true;
+        progLabel.textContent = '';
+        setStatus('Preparing data...', false);
+        updateProgress(0);
+        try {
+            const bigCanv = document.createElement('canvas');
+            bigCanv.width = bigImage.width; bigCanv.height = bigImage.height;
+            const bigCtx = bigCanv.getContext('2d');
+            bigCtx.drawImage(bigImage, 0, 0);
+            const bigData = bigCtx.getImageData(0, 0, bigImage.width, bigImage.height);
+            if (worker) { worker.terminate(); }
+            const blob = new Blob([workerCode], { type: 'application/javascript' });
+            worker = new Worker(URL.createObjectURL(blob));
+            setStatus('Processing in background...', false);
+            var transferList = [bigData.data.buffer];
+            var msg = { bigBuf: bigData.data.buffer, bigW: bigImage.width, bigH: bigImage.height, mode: 'luminance' };
+            setStatus('Upscaling reference to 8K...', false);
+            var upCanv = document.createElement('canvas');
+            upCanv.width = bigImage.width; upCanv.height = bigImage.height;
+            var upCtx = upCanv.getContext('2d');
+            upCtx.imageSmoothingQuality = 'high';
+            upCtx.drawImage(refImage, 0, 0, bigImage.width, bigImage.height);
+            var upData = upCtx.getImageData(0, 0, bigImage.width, bigImage.height);
+            msg.refUpscaledBuf = upData.data.buffer;
+            transferList.push(upData.data.buffer);
+            worker.postMessage(msg, transferList);
+            worker.onmessage = function(e) {
+                const msg = e.data;
+                if (msg.type === 'progress') { updateProgress(msg.pct); }
+                else if (msg.type === 'done') {
+                    worker.terminate(); worker = null;
+                    const pixels = new Uint8ClampedArray(msg.buf);
+                    const imgData = new ImageData(pixels, msg.width, msg.height);
+                    const outCanv = document.createElement('canvas');
+                    outCanv.width = msg.width; outCanv.height = msg.height;
+                    outCanv.getContext('2d').putImageData(imgData, 0, 0);
+                    const previewC = $('previewAfter');
+                    const maxP = 400;
+                    const r = Math.min(maxP / msg.width, maxP / msg.height);
+                    previewC.width = Math.round(msg.width * r);
+                    previewC.height = Math.round(msg.height * r);
+                    previewC.getContext('2d').imageSmoothingQuality = 'high';
+                    previewC.getContext('2d').drawImage(outCanv, 0, 0, previewC.width, previewC.height);
+                    $('afterSize').textContent = msg.width + 'x' + msg.height;
+                    outCanv.toBlob(function(blob) {
+                        resultBlob = blob; $('downloadArea').classList.add('active');
+                        var mb = (blob.size / 1024 / 1024).toFixed(1);
+                        setStatus('Done! ' + msg.width + 'x' + msg.height + ' \u2014 ' + mb + 'MB', false);
+                        isProcessing = false; btnTransfer.disabled = !(bigImage && refImage);
+                        setTimeout(function() { progCont.classList.remove('active'); progLabel.textContent = ''; }, 300);
+                    }, 'image/png');
+                }
+            };
+            worker.onerror = function(e) { setStatus('Worker error: ' + e.message, true); console.error(e); isProcessing = false; btnTransfer.disabled = !(bigImage && refImage); worker = null; };
+        } catch (e) { setStatus('Error: ' + e.message, true); console.error(e); isProcessing = false; btnTransfer.disabled = !(bigImage && refImage); }
+    });
+
+    $('jpgQuality').addEventListener('input', function() { $('jpgQualityLabel').textContent = this.value + '%'; });
+    let saveCounter = 0;
+    $('downloadBtn').addEventListener('click', () => {
+        if (!resultBlob) return;
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(resultBlob);
+        a.download = 'color_transfer_' + $('afterSize').textContent.replace(/[x\s]/g,'_') + '_' + (++saveCounter) + '.png';
+        document.body.appendChild(a); a.click(); document.body.removeChild(a);
+        setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+    });
+    $('downloadJpgBtn').addEventListener('click', () => {
+        if (!resultBlob) return;
+        const img = new Image();
+        img.onload = function() {
+            const c = document.createElement('canvas');
+            c.width = img.width; c.height = img.height;
+            c.getContext('2d').drawImage(img, 0, 0);
+            const quality = parseInt($('jpgQuality').value) / 100;
+            c.toBlob(function(blob) {
+                const a = document.createElement('a');
+                a.href = URL.createObjectURL(blob);
+                a.download = 'color_transfer_' + $('afterSize').textContent.replace(/[x\s]/g,'_') + '_' + (++saveCounter) + '.jpg';
+                document.body.appendChild(a); a.click(); document.body.removeChild(a);
+                setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+            }, 'image/jpeg', quality);
+        };
+        img.src = URL.createObjectURL(resultBlob);
+    });
+
+    // ==============================
+    //  FRAME INTERPOLATION
+    // ==============================
+
+    // State
+    var keyframes = [];          // Array of { img: Image, canvas: offscreen-cvs, data: ImageData }
+    var animFrames = [];         // Array of { canvas: offscreen-cvs, data: ImageData } — pre-rendered
+    var animTotalFrames = 0;
+    var isAnimBuilt = false;
+    var playTimer = null;
+    var currentFrame = 0;
+    var isPlaying = false;
+
+    // DOM refs
+    const frameGrid = $('frameGrid');
+    const fileFrames = $('fileFrames');
+    const btnAddFrames = $('btnAddFrames');
+    const btnClearFrames = $('btnClearFrames');
+    const frameCount = $('frameCount');
+    const btnBuildAnim = $('btnBuildAnim');
+    const holdFramesInput = $('holdFrames');
+    const transFramesInput = $('transFrames');
+    const interpFps = $('interpFps');
+    const easingSelect = $('easingSelect');
+    const animPreview = $('animPreview');
+    const btnPlay = $('btnPlay');
+    const timelineInfo = $('timelineInfo');
+    const interpStatus = $('interpStatus');
+    const btnSaveMp4As = $('btnSaveMp4As');
+    const btnExportMp4 = $('btnExportMp4');
+    const btnSaveGifAs = $('btnSaveGifAs');
+    const btnExportGif = $('btnExportGif');
+    const interpProgBar = $('interpProgressBar');
+    const interpProgCont = $('interpProgress');
+    const recText = $('recText');
+
+    var animW = 0, animH = 0;
+
+    function updateRecommendation() {
+        var n = keyframes.length;
+        if (n < 2) { recText.innerHTML = 'Add at least 2 keyframes to see recommendations.'; return; }
+        var hold = parseInt(holdFramesInput.value) || 30;
+        var trans = parseInt(transFramesInput.value) || 15;
+        var fps = parseInt(interpFps.value) || 30;
+        var totalFrames = n * hold + (n - 1) * trans;
+        var duration = totalFrames / fps;
+        recText.innerHTML =
+            '<b>RECOMMENDATION</b><br>' +
+            'Keyframes: ' + n + ' | Hold: ' + (hold/fps).toFixed(1) + 's each | Transition: ' + (trans/fps).toFixed(1) + 's each<br>' +
+            'Total: ' + totalFrames + ' frames @ ' + fps + 'fps = ' + duration.toFixed(1) + 's<br>' +
+            '<b>Best results:</b> 3-5 keyframes, ' + Math.round(fps*0.5) + '-' + Math.round(fps*2) + ' hold frames, ' + Math.round(fps*0.3) + '-' + fps + ' transition frames';
+    }
+
+    [holdFramesInput, transFramesInput, interpFps].forEach(el => {
+        el.addEventListener('input', updateRecommendation);
+    });
+
+    // Add images
+    btnAddFrames.addEventListener('click', () => fileFrames.click());
+    fileFrames.addEventListener('change', () => {
+        if (!fileFrames.files.length) return;
+        addFiles(fileFrames.files);
+        fileFrames.value = '';
+    });
+
+    // Also allow drop on the grid
+    frameGrid.addEventListener('dragover', e => { e.preventDefault(); frameGrid.style.borderColor = '#fff'; });
+    frameGrid.addEventListener('dragleave', () => { frameGrid.style.borderColor = '#333'; });
+    frameGrid.addEventListener('drop', e => {
+        e.preventDefault(); frameGrid.style.borderColor = '#333';
+        if (e.dataTransfer.files.length) addFiles(e.dataTransfer.files);
+    });
+
+    function addFiles(files) {
+        var pending = [];
+        for (var i = 0; i < files.length; i++) {
+            if (!files[i].type.startsWith('image/')) continue;
+            pending.push(files[i]);
+        }
+        if (!pending.length) return;
+        var loaded = 0;
+        pending.forEach(function(file) {
+            var reader = new FileReader();
+            reader.onload = function(ev) {
+                var img = new Image();
+                img.onload = function() {
+                    // Create offscreen canvas with image data
+                    var c = document.createElement('canvas');
+                    c.width = img.width; c.height = img.height;
+                    c.getContext('2d').drawImage(img, 0, 0);
+                    var data = c.getContext('2d').getImageData(0, 0, img.width, img.height);
+                    keyframes.push({ img: img, canvas: c, data: data, name: file.name });
+                    loaded++;
+                    if (loaded === pending.length) {
+                        // Sort by filename naturally
+                        keyframes.sort(function(a, b) { return a.name.localeCompare(b.name, undefined, { numeric: true }); });
+                        rebuildFrameGrid();
+                    }
+                };
+                img.src = ev.target.result;
+            };
+            reader.readAsDataURL(file);
+        });
+    }
+
+    function rebuildFrameGrid() {
+        frameGrid.innerHTML = '';
+        if (keyframes.length === 0) {
+            frameGrid.innerHTML = '<span style="font-size:17px;color:#555;">Drop or add keyframe images (2+)</span>';
+            frameCount.textContent = '0 frames';
+            btnBuildAnim.disabled = true;
+            animIsBuilt = false;
+            updateRecommendation();
+            return;
+        }
+        keyframes.forEach(function(kf, idx) {
+            var div = document.createElement('div');
+            div.className = 'frame-thumb';
+            div.draggable = true;
+            div.dataset.idx = idx;
+            var img = document.createElement('img');
+            img.src = kf.canvas.toDataURL();
+            div.appendChild(img);
+            var idxEl = document.createElement('div');
+            idxEl.className = 'frame-idx';
+            idxEl.textContent = '#' + (idx+1);
+            div.appendChild(idxEl);
+            var del = document.createElement('div');
+            del.className = 'frame-del';
+            del.textContent = '✕';
+            del.addEventListener('click', function(e) { e.stopPropagation(); keyframes.splice(idx, 1); rebuildFrameGrid(); });
+            div.appendChild(del);
+
+            // Drag & drop reorder
+            div.addEventListener('dragstart', function(e) {
+                e.dataTransfer.setData('text/plain', idx);
+                this.style.opacity = '0.5';
+            });
+            div.addEventListener('dragend', function(e) {
+                this.style.opacity = '1';
+                document.querySelectorAll('.frame-thumb').forEach(function(el) { el.classList.remove('drag-over'); });
+            });
+            div.addEventListener('dragover', function(e) {
+                e.preventDefault();
+                document.querySelectorAll('.frame-thumb').forEach(function(el) { el.classList.remove('drag-over'); });
+                this.classList.add('drag-over');
+            });
+            div.addEventListener('dragleave', function() { this.classList.remove('drag-over'); });
+            div.addEventListener('drop', function(e) {
+                e.preventDefault();
+                var from = parseInt(e.dataTransfer.getData('text/plain'));
+                var to = parseInt(this.dataset.idx);
+                if (from !== to) {
+                    var item = keyframes.splice(from, 1)[0];
+                    keyframes.splice(to, 0, item);
+                    rebuildFrameGrid();
+                }
+            });
+
+            frameGrid.appendChild(div);
+        });
+        frameCount.textContent = keyframes.length + ' frames (drag to reorder)';
+        btnBuildAnim.disabled = false;
+        animIsBuilt = false;
+        interpStatus.textContent = 'Animation changed. Click BUILD.';
+        updateRecommendation();
+    }
+
+    btnClearFrames.addEventListener('click', () => {
+        keyframes = [];
+        animFrames = [];
+        animIsBuilt = false;
+        if (playTimer) { clearInterval(playTimer); playTimer = null; isPlaying = false; btnPlay.textContent = '▶ PLAY'; }
+        rebuildFrameGrid();
+        var ctx = animPreview.getContext('2d');
+        ctx.clearRect(0, 0, animPreview.width, animPreview.height);
+        timelineInfo.textContent = '0 / 0';
+        interpStatus.textContent = 'Build an animation to preview';
+    });
+
+    // Easing
+    function easeInOut(t) { return t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t; }
+    function easeOut(t) { return t * (2 - t); }
+    function applyEasing(t, mode) {
+        if (mode === 'ease-in-out') return easeInOut(t);
+        if (mode === 'ease-out') return easeOut(t);
+        return t;
+    }
+
+    // Build animation
+    btnBuildAnim.addEventListener('click', function() {
+        if (keyframes.length < 2) { interpStatus.textContent = 'Need at least 2 keyframes'; return; }
+
+        var hold = parseInt(holdFramesInput.value) || 30;
+        var trans = parseInt(transFramesInput.value) || 15;
+        var fps = parseInt(interpFps.value) || 30;
+        var easing = easingSelect.value;
+
+        // Normalize all frames to same size (use first keyframe's size)
+        animW = keyframes[0].img.width;
+        animH = keyframes[0].img.height;
+
+        interpStatus.textContent = 'Pre-rendering keyframes...';
+        interpProgCont.classList.add('active');
+        interpProgBar.style.width = '0%';
+
+        // Use setTimeout to let UI update
+        setTimeout(function() {
+            // Pre-render all keyframes to uniform size canvases
+            var rendered = [];
+            keyframes.forEach(function(kf, idx) {
+                var c = document.createElement('canvas');
+                c.width = animW; c.height = animH;
+                var ctx = c.getContext('2d');
+                ctx.imageSmoothingQuality = 'high';
+                ctx.drawImage(kf.img, 0, 0, animW, animH);
+                rendered.push({ canvas: c, data: ctx.getImageData(0, 0, animW, animH) });
+            });
+
+            // Generate all animation frames
+            animFrames = [];
+            var totalTransitions = keyframes.length - 1;
+            var pctPerKey = 100 / keyframes.length;
+
+            for (var k = 0; k < keyframes.length; k++) {
+                // Hold frames for this keyframe
+                if (k > 0) {
+                    // Transition from k-1 to k
+                    var prev = rendered[k-1].data;
+                    var curr = rendered[k].data;
+                    for (var t = 0; t < trans; t++) {
+                        var alpha = applyEasing(t / trans, easing);
+                        var fc = document.createElement('canvas');
+                        fc.width = animW; fc.height = animH;
+                        var fctx = fc.getContext('2d');
+                        var fd = fctx.createImageData(animW, animH);
+                        var px = fd.data;
+                        var len = animW * animH * 4;
+                        for (var pi = 0; pi < len; pi += 4) {
+                            px[pi]   = prev.data[pi]   * (1-alpha) + curr.data[pi]   * alpha;
+                            px[pi+1] = prev.data[pi+1] * (1-alpha) + curr.data[pi+1] * alpha;
+                            px[pi+2] = prev.data[pi+2] * (1-alpha) + curr.data[pi+2] * alpha;
+                            px[pi+3] = 255;
+                        }
+                        fctx.putImageData(fd, 0, 0);
+                        animFrames.push({ canvas: fc, data: fd });
+                    }
+                }
+                // Hold frames
+                for (var h = 0; h < hold; h++) {
+                    animFrames.push({ canvas: rendered[k].canvas, data: rendered[k].data });
+                }
+            }
+
+            animTotalFrames = animFrames.length;
+            isAnimBuilt = true;
+            currentFrame = 0;
+            isPlaying = false;
+
+            // Setup preview canvas
+            animPreview.width = Math.min(animW, 600);
+            animPreview.height = Math.round(animPreview.width * animH / animW);
+            showAnimFrame(0);
+
+            interpStatus.textContent = 'Ready: ' + animTotalFrames + ' frames @ ' + fps + 'fps = ' + (animTotalFrames/fps).toFixed(1) + 's';
+            btnPlay.textContent = '▶ PLAY';
+            timelineInfo.textContent = '1 / ' + animTotalFrames;
+            interpProgCont.classList.remove('active');
+        }, 50);
+    });
+
+    function showAnimFrame(idx) {
+        if (!animFrames.length || idx >= animFrames.length) return;
+        var ctx = animPreview.getContext('2d');
+        ctx.imageSmoothingQuality = 'high';
+        ctx.drawImage(animFrames[idx].canvas, 0, 0, animPreview.width, animPreview.height);
+        currentFrame = idx;
+        timelineInfo.textContent = (idx + 1) + ' / ' + animTotalFrames;
+    }
+
+    // Playback
+    btnPlay.addEventListener('click', function() {
+        if (!isAnimBuilt || animFrames.length === 0) { interpStatus.textContent = 'Build animation first'; return; }
+        if (isPlaying) {
+            // Pause
+            if (playTimer) { clearInterval(playTimer); playTimer = null; }
+            isPlaying = false;
+            btnPlay.textContent = '▶ PLAY';
+            return;
+        }
+        // If at end, loop
+        if (currentFrame >= animTotalFrames - 1) { currentFrame = 0; showAnimFrame(0); }
+
+        isPlaying = true;
+        btnPlay.textContent = '⏸ STOP';
+        var fps = parseInt(interpFps.value) || 30;
+        var interval = 1000 / fps;
+
+        playTimer = setInterval(function() {
+            if (currentFrame >= animTotalFrames - 1) {
+                clearInterval(playTimer);
+                playTimer = null;
+                isPlaying = false;
+                btnPlay.textContent = '▶ PLAY';
+                return;
+            }
+            showAnimFrame(currentFrame + 1);
+        }, interval);
+    });
+
+    // ---- Auto-download MP4 ----
+    btnExportMp4.addEventListener('click', function() {
+        if (!isAnimBuilt || animFrames.length === 0) { interpStatus.textContent = 'Build animation first'; return; }
+        var fps = parseInt(interpFps.value) || 30;
+        var mp4Supported = MediaRecorder.isTypeSupported('video/mp4') || MediaRecorder.isTypeSupported('video/mp4;codecs=avc1.42E01E');
+        var mime = mp4Supported ? 'video/mp4' : 'video/webm;codecs=vp9';
+        var ext = mp4Supported ? '.mp4' : '.webm';
+
+        var stream = animPreview.captureStream(fps);
+        var chunks = [];
+        var recorder = new MediaRecorder(stream, { mimeType: mime });
+        recorder.ondataavailable = function(e) { if (e.data.size > 0) chunks.push(e.data); };
+        recorder.onstop = function() {
+            var blob = new Blob(chunks, { type: mime });
+            var a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = 'animation_' + animTotalFrames + 'f_' + fps + 'fps' + ext;
+            document.body.appendChild(a); a.click(); document.body.removeChild(a);
+            setTimeout(function() { URL.revokeObjectURL(a.href); }, 1000);
+            interpStatus.textContent = ext === '.mp4' ? 'MP4 downloaded!' : 'Browser lacks MP4, saved as WebM.';
+        };
+
+        if (playTimer) { clearInterval(playTimer); playTimer = null; }
+        if (currentFrame >= animTotalFrames - 1) { currentFrame = 0; showAnimFrame(0); }
+        isPlaying = true;
+        btnPlay.textContent = '⏸ STOP';
+        recorder.start();
+        var interval2 = 1000 / fps;
+        playTimer = setInterval(function() {
+            if (currentFrame >= animTotalFrames - 1) {
+                clearInterval(playTimer); playTimer = null;
+                if (recorder.state !== 'inactive') recorder.stop();
+                isPlaying = false;
+                btnPlay.textContent = '▶ PLAY';
+                return;
+            }
+            showAnimFrame(currentFrame + 1);
+        }, interval2);
+    });
+
+    // ---- Save MP4 As... (File System Access API) ----
+    btnSaveMp4As.addEventListener('click', async function() {
+        if (!isAnimBuilt || animFrames.length === 0) { interpStatus.textContent = 'Build animation first'; return; }
+        var fps = parseInt(interpFps.value) || 30;
+
+        var mp4Supported = MediaRecorder.isTypeSupported('video/mp4') || MediaRecorder.isTypeSupported('video/mp4;codecs=avc1.42E01E');
+        var mimeType = 'video/webm;codecs=vp9';
+
+        if (typeof window.showSaveFilePicker === 'undefined') {
+            interpStatus.textContent = 'Save dialog not supported.', true;
+            return;
+        }
+
+        try {
+            var ext = mp4Supported ? '.mp4' : '.webm';
+            var mimeAccept = mp4Supported ? { 'video/mp4': ['.mp4'] } : { 'video/webm': ['.webm'] };
+            var handle = await window.showSaveFilePicker({
+                suggestedName: 'animation_' + animTotalFrames + 'f_' + fps + 'fps' + ext,
+                types: [{ description: mp4Supported ? 'MP4 Video' : 'WebM Video', accept: mimeAccept }]
+            });
+
+            var writable = await handle.createWritable();
+            interpStatus.textContent = 'Recording...';
+
+            var stream = animPreview.captureStream(fps);
+            var chunks = [];
+            var mime = mp4Supported ? 'video/mp4' : mimeType;
+            var recorder = new MediaRecorder(stream, { mimeType: mime });
+            recorder.ondataavailable = function(e) { if (e.data.size > 0) chunks.push(e.data); };
+            recorder.onstop = async function() {
+                var blob = new Blob(chunks, { type: mime });
+                await writable.write(blob);
+                await writable.close();
+                interpStatus.textContent = 'Saved to ' + handle.name + (!mp4Supported ? ' (browser lacks MP4, saved as WebM)' : '');
+            };
+
+            if (playTimer) { clearInterval(playTimer); playTimer = null; }
+            if (currentFrame >= animTotalFrames - 1) { currentFrame = 0; showAnimFrame(0); }
+            isPlaying = true;
+            btnPlay.textContent = '⏸ STOP';
+            recorder.start();
+            var interval2 = 1000 / fps;
+            playTimer = setInterval(function() {
+                if (currentFrame >= animTotalFrames - 1) {
+                    clearInterval(playTimer); playTimer = null;
+                    if (recorder.state !== 'inactive') recorder.stop();
+                    isPlaying = false;
+                    btnPlay.textContent = '▶ PLAY';
+                    return;
+                }
+                showAnimFrame(currentFrame + 1);
+            }, interval2);
+        } catch (e) {
+            if (e.name !== 'AbortError') { interpStatus.textContent = 'Save cancelled or failed', true; console.error(e); }
+        }
+    });
+
+    // ---- Auto-download GIF ----
+    btnExportGif.addEventListener('click', function() {
+        if (!isAnimBuilt || animFrames.length === 0) { interpStatus.textContent = 'Build animation first'; return; }
+        if (typeof GIF === 'undefined') { interpStatus.textContent = 'GIF library not loaded', true; return; }
+
+        var fps = parseInt(interpFps.value) || 30;
+        var delay = Math.round(1000 / fps);
+        var maxFrames = Math.min(animFrames.length, 300);
+
+        interpStatus.textContent = 'Encoding GIF...';
+        interpProgCont.classList.add('active');
+
+        var gif = new GIF({
+            workers: 2, quality: 10,
+            width: Math.min(animW, 400),
+            height: Math.round(Math.min(animW, 400) * animH / animW),
+            repeat: 0
+        });
+
+        var step = Math.max(1, Math.floor(animFrames.length / maxFrames));
+        var count = 0;
+
+        function addNext() {
+            var idx = count * step;
+            if (idx >= animFrames.length || count >= maxFrames) {
+                gif.on('progress', function(p) { interpProgBar.style.width = Math.round(p * 100) + '%'; });
+                gif.on('finished', function(blob) {
+                    var a = document.createElement('a');
+                    a.href = URL.createObjectURL(blob);
+                    a.download = 'animation_' + animTotalFrames + 'f.gif';
+                    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+                    setTimeout(function() { URL.revokeObjectURL(a.href); }, 1000);
+                    interpProgCont.classList.remove('active');
+                    interpStatus.textContent = 'GIF exported!';
+                });
+                gif.render();
+                return;
+            }
+            var tmpC = document.createElement('canvas');
+            tmpC.width = gif.options.width;
+            tmpC.height = gif.options.height;
+            var tctx = tmpC.getContext('2d');
+            tctx.imageSmoothingQuality = 'high';
+            tctx.drawImage(animFrames[idx].canvas, 0, 0, tmpC.width, tmpC.height);
+            gif.addFrame(tmpC, { copy: true, delay: delay });
+            count++;
+            interpStatus.textContent = 'Encoding GIF (' + count + '/' + maxFrames + ')...';
+            interpProgBar.style.width = Math.round(count / maxFrames * 100) + '%';
+            setTimeout(addNext, 0);
+        }
+        addNext();
+    });
+
+    // ---- Save GIF As... (File System Access API) ----
+    btnSaveGifAs.addEventListener('click', function() {
+        if (!isAnimBuilt || animFrames.length === 0) { interpStatus.textContent = 'Build animation first'; return; }
+        if (typeof GIF === 'undefined') { interpStatus.textContent = 'GIF library not loaded', true; return; }
+        if (typeof window.showSaveFilePicker === 'undefined') { interpStatus.textContent = 'Save dialog not supported', true; return; }
+
+        var fps = parseInt(interpFps.value) || 30;
+        var delay = Math.round(1000 / fps);
+        var maxFrames = Math.min(animFrames.length, 300);
+
+        interpStatus.textContent = 'Encoding GIF...';
+        interpProgCont.classList.add('active');
+
+        var gif = new GIF({
+            workers: 2, quality: 10,
+            width: Math.min(animW, 400),
+            height: Math.round(Math.min(animW, 400) * animH / animW),
+            repeat: 0
+        });
+
+        var step = Math.max(1, Math.floor(animFrames.length / maxFrames));
+        var count = 0;
+
+        function addGifFrame() {
+            var idx = count * step;
+            if (idx >= animFrames.length || count >= maxFrames) {
+                gif.on('progress', function(p) { interpProgBar.style.width = Math.round(p * 100) + '%'; });
+                gif.on('finished', async function(blob) {
+                    try {
+                        var handle = await window.showSaveFilePicker({
+                            suggestedName: 'animation_' + animTotalFrames + 'f.gif',
+                            types: [{ description: 'GIF Image', accept: { 'image/gif': ['.gif'] } }]
+                        });
+                        var writable = await handle.createWritable();
+                        await writable.write(blob);
+                        await writable.close();
+                        interpStatus.textContent = 'GIF saved to ' + handle.name;
+                    } catch (e) {
+                        if (e.name !== 'AbortError') {
+                            var a = document.createElement('a');
+                            a.href = URL.createObjectURL(blob);
+                            a.download = 'animation_' + animTotalFrames + 'f.gif';
+                            document.body.appendChild(a); a.click(); document.body.removeChild(a);
+                            setTimeout(function() { URL.revokeObjectURL(a.href); }, 1000);
+                            interpStatus.textContent = 'Save cancelled — downloaded instead';
+                        }
+                    }
+                    interpProgCont.classList.remove('active');
+                });
+                gif.render();
+                return;
+            }
+            var tmpC = document.createElement('canvas');
+            tmpC.width = gif.options.width;
+            tmpC.height = gif.options.height;
+            var tctx = tmpC.getContext('2d');
+            tctx.imageSmoothingQuality = 'high';
+            tctx.drawImage(animFrames[idx].canvas, 0, 0, tmpC.width, tmpC.height);
+            gif.addFrame(tmpC, { copy: true, delay: delay });
+            count++;
+            interpStatus.textContent = 'Encoding GIF (' + count + '/' + maxFrames + ')...';
+            interpProgBar.style.width = Math.round(count / maxFrames * 100) + '%';
+            setTimeout(addGifFrame, 0);
+        }
+        addGifFrame();
+    });
+
+    // ---- Presets (localStorage) ----
+    var presetSelect = $('presetSelect');
+    var presetNameInput = $('presetName');
+
+    function refreshPresetList() {
+        var keys = [];
+        for (var i = 0; i < localStorage.length; i++) {
+            var k = localStorage.key(i);
+            if (k.startsWith('interp_preset_')) keys.push(k.slice(14));
+        }
+        keys.sort();
+        presetSelect.innerHTML = '<option value="">\u2014 SAVED PRESETS \u2014</option>';
+        keys.forEach(function(name) {
+            var opt = document.createElement('option');
+            opt.value = name;
+            opt.textContent = name;
+            presetSelect.appendChild(opt);
+        });
+    }
+
+    $('btnSavePreset').addEventListener('click', function() {
+        var name = presetNameInput.value.trim();
+        if (!name) { interpStatus.textContent = 'Enter a preset name', true; return; }
+        var data = {
+            hold: parseInt(holdFramesInput.value) || 30,
+            trans: parseInt(transFramesInput.value) || 15,
+            fps: parseInt(interpFps.value) || 30,
+            easing: easingSelect.value
+        };
+        localStorage.setItem('interp_preset_' + name, JSON.stringify(data));
+        refreshPresetList();
+        presetSelect.value = name;
+        interpStatus.textContent = 'Preset "' + name + '" saved';
+    });
+
+    $('btnLoadPreset').addEventListener('click', function() {
+        var name = presetSelect.value;
+        if (!name) { interpStatus.textContent = 'Select a preset first', true; return; }
+        var raw = localStorage.getItem('interp_preset_' + name);
+        if (!raw) { interpStatus.textContent = 'Preset not found', true; return; }
+        var data = JSON.parse(raw);
+        holdFramesInput.value = data.hold;
+        transFramesInput.value = data.trans;
+        interpFps.value = data.fps;
+        easingSelect.value = data.easing;
+        presetNameInput.value = name;
+        updateRecommendation();
+        interpStatus.textContent = 'Preset "' + name + '" loaded';
+    });
+
+    $('btnDeletePreset').addEventListener('click', function() {
+        var name = presetSelect.value;
+        if (!name) { interpStatus.textContent = 'Select a preset first', true; return; }
+        localStorage.removeItem('interp_preset_' + name);
+        refreshPresetList();
+        if (presetNameInput.value === name) presetNameInput.value = '';
+        interpStatus.textContent = 'Preset "' + name + '" deleted';
+    });
+
+    refreshPresetList();
+
+    // ---- Time ----
+    function updateDateTime() {
+        const now = new Date();
+        const t = $('currentTime'), d = $('currentDate');
+        if (t) t.textContent = now.toLocaleTimeString('en-GB');
+        if (d) d.textContent = now.toLocaleDateString('en-GB');
+    }
+    updateDateTime();
+    setInterval(updateDateTime, 1000);
+
+})();
+</script>
+</body>
+</html>
