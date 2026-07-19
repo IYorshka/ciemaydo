@@ -840,7 +840,7 @@
         // Dynamic counters (fallback to static HTML if fetch fails, e.g. file://)
         (function(){
             const mediaEl = document.getElementById('mediaCount');
-            const modsEl = document.getElementById('modsCount');
+            const modsEl = document.getElementById('modCount');
 
             // Update media: fetch shots-meta.json, compute total - deleted
             fetch('shots-meta.json').then(r => r.json()).then(meta => {

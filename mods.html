@@ -324,23 +324,37 @@
         /* Mods Grid */
         .mods-grid {
             display: grid;
-            grid-template-columns: repeat(3, minmax(260px, 320px));
-            gap: 26px;
-            max-width: 1040px;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 20px;
+            max-width: 1400px;
             justify-content: center;
         }
 
-        @media (max-width: 1100px) {
+        @media (max-width: 1300px) {
             .mods-grid {
-                grid-template-columns: repeat(2, minmax(260px, 320px));
-                max-width: 700px;
+                grid-template-columns: repeat(4, 1fr);
+                max-width: 1100px;
+            }
+        }
+
+        @media (max-width: 1000px) {
+            .mods-grid {
+                grid-template-columns: repeat(3, 1fr);
+                max-width: 800px;
             }
         }
 
         @media (max-width: 720px) {
             .mods-grid {
-                grid-template-columns: minmax(260px, 1fr);
-                max-width: 360px;
+                grid-template-columns: repeat(2, 1fr);
+                max-width: 500px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .mods-grid {
+                grid-template-columns: 1fr;
+                max-width: 320px;
             }
         }
         
@@ -587,7 +601,7 @@
     <div style="position: fixed; top: 75px; right: 20px; z-index: 10;">
         <div class="counter-box chromatic-border">
             <span style="color: #888;">MODS:</span>
-            <span id="modCount" style="color: #fff;">4</span>
+            <span id="modCount" style="color: #fff;">16</span>
         </div>
     </div>
     
@@ -789,6 +803,160 @@
                 </div>
                 <div class="mod-info">
                     <div class="mod-title">UBE ALICE COSPLAY - RM PRESET</div>
+                    <div class="mod-game">SKYRIM SPECIAL EDITION</div>
+                </div>
+            </a>
+
+            <!-- Mod 10 -->
+            <a href="https://www.nexusmods.com/skyrimspecialedition/mods/184195" target="_blank" class="mod-card chromatic-border">
+                <div class="corner-decoration corner-tl"></div>
+                <div class="corner-decoration corner-tr"></div>
+                <div class="corner-decoration corner-bl"></div>
+                <div class="corner-decoration corner-br"></div>
+
+                <button class="like-btn" onclick="toggleLike(event, this)" title="Like">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                    </svg>
+                </button>
+
+                <div class="mod-image-wrapper">
+                    <img src="https://staticdelivery.nexusmods.com/mods/1704/images/184195/184195-1783015891-31051019.png" alt="Fx For Reshade - Background Lens">
+                </div>
+                <div class="mod-info">
+                    <div class="mod-title">FX FOR RESHADE - BACKGROUND LENS</div>
+                    <div class="mod-game">SKYRIM SPECIAL EDITION</div>
+                </div>
+            </a>
+
+            <!-- Mod 11 -->
+            <a href="https://www.nexusmods.com/skyrimspecialedition/mods/180293" target="_blank" class="mod-card chromatic-border">
+                <div class="corner-decoration corner-tl"></div>
+                <div class="corner-decoration corner-tr"></div>
+                <div class="corner-decoration corner-bl"></div>
+                <div class="corner-decoration corner-br"></div>
+
+                <button class="like-btn" onclick="toggleLike(event, this)" title="Like">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                    </svg>
+                </button>
+
+                <div class="mod-image-wrapper">
+                    <img src="https://staticdelivery.nexusmods.com/mods/1704/images/180293/180293-1779043385-1370895003.png" alt="Fx For Reshade - Archer Borders">
+                </div>
+                <div class="mod-info">
+                    <div class="mod-title">FX FOR RESHADE - ARCHER BORDERS</div>
+                    <div class="mod-game">SKYRIM SPECIAL EDITION</div>
+                </div>
+            </a>
+
+            <!-- Mod 12 -->
+            <a href="https://www.nexusmods.com/skyrimspecialedition/mods/180103" target="_blank" class="mod-card chromatic-border">
+                <div class="corner-decoration corner-tl"></div>
+                <div class="corner-decoration corner-tr"></div>
+                <div class="corner-decoration corner-bl"></div>
+                <div class="corner-decoration corner-br"></div>
+
+                <button class="like-btn" onclick="toggleLike(event, this)" title="Like">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                    </svg>
+                </button>
+
+                <div class="mod-image-wrapper">
+                    <img src="https://staticdelivery.nexusmods.com/mods/1704/images/180103/180103-1778863259-1962217825.png" alt="Fx For Reshade - Comlex Cromatic Abberation">
+                </div>
+                <div class="mod-info">
+                    <div class="mod-title">FX FOR RESHADE - COMLEX CROMATIC ABBERATION</div>
+                    <div class="mod-game">SKYRIM SPECIAL EDITION</div>
+                </div>
+            </a>
+
+            <!-- Mod 13 -->
+            <a href="https://www.nexusmods.com/skyrimspecialedition/mods/156416" target="_blank" class="mod-card chromatic-border">
+                <div class="corner-decoration corner-tl"></div>
+                <div class="corner-decoration corner-tr"></div>
+                <div class="corner-decoration corner-bl"></div>
+                <div class="corner-decoration corner-br"></div>
+
+                <button class="like-btn" onclick="toggleLike(event, this)" title="Like">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                    </svg>
+                </button>
+
+                <div class="mod-image-wrapper">
+                    <img src="https://staticdelivery.nexusmods.com/mods/1704/images/156416/156416-1776262744-945024964.png" alt="SAM Expression Pack - Screen Archer Menu Face Emotions">
+                </div>
+                <div class="mod-info">
+                    <div class="mod-title">SAM EXPRESSION PACK - SCREEN ARCHER MENU FACE EMOTIONS</div>
+                    <div class="mod-game">SKYRIM SPECIAL EDITION</div>
+                </div>
+            </a>
+
+            <!-- Mod 14 -->
+            <a href="https://www.nexusmods.com/skyrimspecialedition/mods/176579" target="_blank" class="mod-card chromatic-border">
+                <div class="corner-decoration corner-tl"></div>
+                <div class="corner-decoration corner-tr"></div>
+                <div class="corner-decoration corner-bl"></div>
+                <div class="corner-decoration corner-br"></div>
+
+                <button class="like-btn" onclick="toggleLike(event, this)" title="Like">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                    </svg>
+                </button>
+
+                <div class="mod-image-wrapper">
+                    <img src="https://staticdelivery.nexusmods.com/mods/1704/images/176579/176579-1775670183-696710614.png" alt="UBE Yoko - Bodyslide Preset">
+                </div>
+                <div class="mod-info">
+                    <div class="mod-title">UBE YOKO - BODYSLIDE PRESET</div>
+                    <div class="mod-game">SKYRIM SPECIAL EDITION</div>
+                </div>
+            </a>
+
+            <!-- Mod 15 -->
+            <a href="https://www.nexusmods.com/skyrimspecialedition/mods/176343" target="_blank" class="mod-card chromatic-border">
+                <div class="corner-decoration corner-tl"></div>
+                <div class="corner-decoration corner-tr"></div>
+                <div class="corner-decoration corner-bl"></div>
+                <div class="corner-decoration corner-br"></div>
+
+                <button class="like-btn" onclick="toggleLike(event, this)" title="Like">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                    </svg>
+                </button>
+
+                <div class="mod-image-wrapper">
+                    <img src="https://staticdelivery.nexusmods.com/mods/1704/images/176343/176343-1775410749-275933980.png" alt="UBE Yoko - Race Menu Face Preset">
+                </div>
+                <div class="mod-info">
+                    <div class="mod-title">UBE YOKO - RACE MENU FACE PRESET (RM)</div>
+                    <div class="mod-game">SKYRIM SPECIAL EDITION</div>
+                </div>
+            </a>
+
+            <!-- Mod 16 -->
+            <a href="https://www.nexusmods.com/skyrimspecialedition/mods/173137" target="_blank" class="mod-card chromatic-border">
+                <div class="corner-decoration corner-tl"></div>
+                <div class="corner-decoration corner-tr"></div>
+                <div class="corner-decoration corner-bl"></div>
+                <div class="corner-decoration corner-br"></div>
+
+                <button class="like-btn" onclick="toggleLike(event, this)" title="Like">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                    </svg>
+                </button>
+
+                <div class="mod-image-wrapper">
+                    <img src="https://staticdelivery.nexusmods.com/mods/1704/images/173137/173137-1771729617-1477504762.png" alt="UBE Follower - Naksu">
+                </div>
+                <div class="mod-info">
+                    <div class="mod-title">UBE FOLLOWER - NAKSU</div>
                     <div class="mod-game">SKYRIM SPECIAL EDITION</div>
                 </div>
             </a>
