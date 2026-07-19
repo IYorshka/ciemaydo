@@ -713,10 +713,6 @@
         .filter-btn-nsfw { border-color: #ff4b4b; }
 
         .admin-login-btn {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            z-index: 10;
             background: rgba(10,10,10,0.95);
             border: 2px solid #ffffff;
             color: #ffffff;
@@ -855,7 +851,7 @@
     </div>
 
     <!-- Admin Login / Export -->
-    <div style="position: fixed; bottom: 20px; right: 20px; z-index: 10; display: flex; flex-direction: column; gap: 6px; align-items: end;">
+    <div style="position: fixed; bottom: 80px; right: 20px; z-index: 10; display: flex; flex-direction: column; gap: 6px; align-items: end;">
         <button class="admin-export-btn" id="adminExportBtn" style="display:none;">EXPORT</button>
         <button class="admin-login-btn" id="adminLoginBtn">ADMIN</button>
     </div>
@@ -2568,7 +2564,7 @@
 
         // --- Metadata & Admin State ---
         const ADMIN_HASH = '6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b'; // SHA-256("1")
-        let META = { nsfw: [], deleted: [] };
+        let META = { total: SHOTS.length, nsfw: [], deleted: [] };
         let isAdmin = false;
         let filterMode = 'all';
 
@@ -2638,6 +2634,7 @@
         }
 
         function adminExport() {
+            META.total = SHOTS.length;
             const out = JSON.stringify(META, null, 2);
             const blob = new Blob([out], { type: 'application/json' });
             const a = document.createElement('a');
