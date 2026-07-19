@@ -264,11 +264,6 @@
         
         /* Page Title */
         .page-title {
-            position: fixed;
-            top: 75px;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 10;
             font-size: 14px;
             color: #000000;
             text-shadow: 
@@ -278,13 +273,15 @@
                 1px 1px 0 #ffffff,
                 0 0 2px #ffffff;
             letter-spacing: 3px;
+            margin-bottom: 16px;
+            text-align: center;
         }
         
         /* Gallery Container */
         .gallery-container {
             position: relative;
             z-index: 5;
-            padding: 130px 40px 40px 40px;
+            padding: 170px 40px 40px 40px;
             max-width: 1400px;
             margin: 0 auto;
         }
@@ -691,7 +688,7 @@
 
         .filter-bar {
             position: fixed;
-            top: 75px;
+            top: 105px;
             left: 50%;
             transform: translateX(-50%);
             z-index: 10;
@@ -842,9 +839,6 @@
         <a class="nav-tab" href="contacts.html" target="_self">CONTACTS</a>
     </div>
     
-    <!-- Page Title -->
-    <div class="page-title">MY SHOTS</div>
-
     <!-- Filter Bar -->
     <div class="filter-bar" id="filterBar">
         <button class="filter-btn active" data-filter="all">ALL</button>
@@ -853,7 +847,7 @@
     </div>
     
     <!-- Counter -->
-    <div style="position: fixed; top: 110px; right: 20px; z-index: 10;">
+    <div style="position: fixed; top: 140px; right: 20px; z-index: 10;">
         <div class="counter-box chromatic-border">
             <span style="color: #888;">TOTAL:</span>
             <span id="shotCount" style="color: #fff;">12</span>
@@ -861,13 +855,14 @@
     </div>
 
     <!-- Admin Login / Export -->
-    <div style="position: fixed; bottom: 20px; right: 20px; z-index: 10; display: flex; gap: 6px;">
-        <button class="admin-login-btn" id="adminLoginBtn">ADMIN</button>
+    <div style="position: fixed; bottom: 20px; right: 20px; z-index: 10; display: flex; flex-direction: column; gap: 6px; align-items: end;">
         <button class="admin-export-btn" id="adminExportBtn" style="display:none;">EXPORT</button>
+        <button class="admin-login-btn" id="adminLoginBtn">ADMIN</button>
     </div>
     
     <!-- Gallery Container -->
     <div class="gallery-container">
+        <div class="page-title">MY SHOTS</div>
         <div class="gallery-grid" id="galleryGrid"></div>
 
         <!-- Pagination -->
@@ -2859,9 +2854,8 @@
                 document.getElementById('vhsRight'),
                 document.getElementById('hLine'),
                 document.getElementById('navTabs'),
-                document.querySelector('.page-title'),
                 document.querySelector('.gallery-container'),
-                document.querySelector('[style*="top: 75px; right: 20px"]')
+                document.querySelector('[style*="top: 140px; right: 20px"]')
             ].filter(Boolean);
 
             all.forEach(el => {
