@@ -688,6 +688,105 @@
             transform: translate(-4px, -1px) rotate(-30deg);
             filter: blur(1px);
         }
+
+        .filter-bar {
+            position: fixed;
+            top: 75px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10;
+            display: flex;
+            gap: 6px;
+        }
+        .filter-btn {
+            background: rgba(10,10,10,0.95);
+            border: 2px solid #ffffff;
+            color: #ffffff;
+            padding: 6px 12px;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 7px;
+            cursor: pointer;
+            box-shadow: 3px 3px 0 rgba(0,0,0,0.8);
+            transition: all 0.1s;
+            letter-spacing: 1px;
+        }
+        .filter-btn:hover { background: rgba(30,30,30,0.95); transform: translate(1px,1px); box-shadow: 1px 1px 0 rgba(0,0,0,0.8); }
+        .filter-btn.active { background: rgba(80,80,80,0.95); transform: translate(2px,2px); box-shadow: 1px 1px 0 rgba(0,0,0,0.8); }
+        .filter-btn-sfw { border-color: #45ff7a; }
+        .filter-btn-nsfw { border-color: #ff4b4b; }
+
+        .admin-login-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 10;
+            background: rgba(10,10,10,0.95);
+            border: 2px solid #ffffff;
+            color: #ffffff;
+            padding: 6px 10px;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 6px;
+            cursor: pointer;
+            box-shadow: 3px 3px 0 rgba(0,0,0,0.8);
+            letter-spacing: 1px;
+            transition: all 0.1s;
+        }
+        .admin-login-btn:hover { background: rgba(30,30,30,0.95); transform: translate(1px,1px); box-shadow: 1px 1px 0 rgba(0,0,0,0.8); }
+        .admin-login-btn.active { background: #ff4b4b; }
+
+        .admin-controls {
+            position: absolute;
+            top: 4px;
+            right: 4px;
+            z-index: 20;
+            display: flex;
+            gap: 3px;
+            opacity: 0;
+            transition: opacity 0.15s;
+        }
+        .gallery-item:hover .admin-controls { opacity: 1; }
+        .admin-btn {
+            background: rgba(10,10,10,0.95);
+            border: 1px solid #ffffff;
+            color: #ffffff;
+            padding: 3px 6px;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 5px;
+            cursor: pointer;
+            letter-spacing: 1px;
+        }
+        .admin-btn:hover { background: rgba(80,80,80,0.95); }
+        .admin-btn-sfw { border-color: #45ff7a; color: #45ff7a; }
+        .admin-btn-nsfw { border-color: #ff4b4b; color: #ff4b4b; }
+        .admin-btn-del { border-color: #ff4b4b; color: #ff4b4b; }
+        .admin-tag {
+            margin-left: 6px;
+            font-size: 5px;
+            color: #888;
+        }
+        .nsfw-badge {
+            display: inline-block;
+            background: #ff4b4b;
+            color: #fff;
+            font-size: 5px;
+            padding: 2px 5px;
+            margin-left: 4px;
+            letter-spacing: 1px;
+        }
+        .gallery-item.deleted { display: none; }
+        .admin-export-btn {
+            background: rgba(10,10,10,0.95);
+            border: 2px solid #45ff7a;
+            color: #45ff7a;
+            padding: 8px 14px;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 6px;
+            cursor: pointer;
+            box-shadow: 3px 3px 0 rgba(0,0,0,0.8);
+            letter-spacing: 1px;
+            transition: all 0.1s;
+        }
+        .admin-export-btn:hover { background: rgba(30,30,30,0.95); transform: translate(1px,1px); box-shadow: 1px 1px 0 rgba(0,0,0,0.8); }
     </style>
 </head>
 <body>
@@ -745,13 +844,26 @@
     
     <!-- Page Title -->
     <div class="page-title">MY SHOTS</div>
+
+    <!-- Filter Bar -->
+    <div class="filter-bar" id="filterBar">
+        <button class="filter-btn active" data-filter="all">ALL</button>
+        <button class="filter-btn filter-btn-sfw" data-filter="sfw">SFW</button>
+        <button class="filter-btn filter-btn-nsfw" data-filter="nsfw">NSFW</button>
+    </div>
     
     <!-- Counter -->
-    <div style="position: fixed; top: 75px; right: 20px; z-index: 10;">
+    <div style="position: fixed; top: 110px; right: 20px; z-index: 10;">
         <div class="counter-box chromatic-border">
             <span style="color: #888;">TOTAL:</span>
             <span id="shotCount" style="color: #fff;">12</span>
         </div>
+    </div>
+
+    <!-- Admin Login / Export -->
+    <div style="position: fixed; bottom: 20px; right: 20px; z-index: 10; display: flex; gap: 6px;">
+        <button class="admin-login-btn" id="adminLoginBtn">ADMIN</button>
+        <button class="admin-export-btn" id="adminExportBtn" style="display:none;">EXPORT</button>
     </div>
     
     <!-- Gallery Container -->
@@ -2459,7 +2571,27 @@
         ];
 
 
-        const SHOTS_VIEW = SHOTS.slice();
+        // --- Metadata & Admin State ---
+        const ADMIN_HASH = '6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b'; // SHA-256("1")
+        let META = { nsfw: [], deleted: [] };
+        let isAdmin = false;
+        let filterMode = 'all';
+
+        // Build filtered view: SHOTS_VIEW holds URLs, SHOTS_IDX maps view index back to SHOTS index
+        let SHOTS_VIEW = [];
+        let SHOTS_IDX = [];
+        function buildView() {
+            SHOTS_VIEW = [];
+            SHOTS_IDX = [];
+            for (let i = 0; i < SHOTS.length; i++) {
+                if (META.deleted.includes(i)) continue;
+                if (filterMode === 'sfw' && META.nsfw.includes(i)) continue;
+                if (filterMode === 'nsfw' && !META.nsfw.includes(i)) continue;
+                SHOTS_VIEW.push(SHOTS[i]);
+                SHOTS_IDX.push(i);
+            }
+        }
+        buildView();
 
         // Pagination
         const PER_PAGE = 32;
@@ -2469,9 +2601,99 @@
         const pager = document.getElementById('pager');
         const countEl = document.getElementById('shotCount');
 
+        // --- Admin Functions ---
+        async function sha256(str) {
+            const buf = new TextEncoder().encode(str);
+            const hash = await crypto.subtle.digest('SHA-256', buf);
+            return Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2, '0')).join('');
+        }
+
+        async function adminLogin() {
+            const pwd = prompt('Enter admin password:');
+            if (!pwd) return;
+            const h = await sha256(pwd);
+            if (h !== ADMIN_HASH) { alert('Wrong password'); return; }
+            isAdmin = true;
+            document.getElementById('adminLoginBtn').textContent = 'ADMIN ON';
+            document.getElementById('adminLoginBtn').classList.add('active');
+            document.getElementById('adminExportBtn').style.display = 'inline-block';
+            render();
+        }
+
+        function adminLogout() {
+            isAdmin = false;
+            document.getElementById('adminLoginBtn').textContent = 'ADMIN';
+            document.getElementById('adminLoginBtn').classList.remove('active');
+            document.getElementById('adminExportBtn').style.display = 'none';
+            render();
+        }
+
+        function adminToggleTag(globalIdx) {
+            const idx = META.nsfw.indexOf(globalIdx);
+            if (idx >= 0) META.nsfw.splice(idx, 1);
+            else META.nsfw.push(globalIdx);
+            render();
+        }
+
+        function adminToggleDelete(globalIdx) {
+            const idx = META.deleted.indexOf(globalIdx);
+            if (idx >= 0) META.deleted.splice(idx, 1);
+            else META.deleted.push(globalIdx);
+            render();
+        }
+
+        function adminExport() {
+            const out = JSON.stringify(META, null, 2);
+            const blob = new Blob([out], { type: 'application/json' });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = 'shots-meta.json';
+            a.click();
+            URL.revokeObjectURL(a.href);
+        }
+
+        function bindAdminControls() {
+            document.querySelectorAll('.admin-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const idx = Number(btn.dataset.idx);
+                    if (btn.dataset.action === 'tag') adminToggleTag(idx);
+                    if (btn.dataset.action === 'delete') adminToggleDelete(idx);
+                });
+            });
+        }
+
+        // --- Filter buttons ---
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                filterMode = btn.dataset.filter;
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                page = 1;
+                buildView();
+                render();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+        });
+
+        // --- Admin button ---
+        document.getElementById('adminLoginBtn').addEventListener('click', () => {
+            if (isAdmin) adminLogout();
+            else adminLogin();
+        });
+        document.getElementById('adminExportBtn').addEventListener('click', adminExport);
+
+        // --- Load metadata ---
+        fetch('shots-meta.json').then(r => r.json()).then(m => {
+            META = m;
+            buildView();
+            render();
+        }).catch(() => {});
+
         function render() {
             if (!grid || !pager || !countEl) return;
 
+            buildView();
             const total = SHOTS_VIEW.length;
             countEl.textContent = total;
 
@@ -2486,15 +2708,13 @@
                 const label = String(n).padStart(3, '0');
                 const isGif = /\.gif(\?|$)/i.test(src);
                 const alt = `Screenshot ${n}`;
-                const globalIdx = start + idx; // index in SHOTS_VIEW
-
+                const globalIdx = SHOTS_IDX[start + idx];
                 const thumb = (!isGif && THUMBS[globalIdx]) ? THUMBS[globalIdx] : src;
-
-                // Load first few thumbnails eagerly for perceived speed, rest lazy.
                 const eager = idx < 8;
+                const isNsfw = META.nsfw.includes(globalIdx);
 
                 return `
-                    <div class="gallery-item" data-src="${src}" data-idx="${globalIdx}">
+                    <div class="gallery-item${isNsfw ? ' nsfw-item' : ''}" data-src="${src}" data-idx="${start + idx}">
                         <img 
                             ${eager ? 'loading="eager" fetchpriority="high"' : 'loading="lazy"'}
                             decoding="async"
@@ -2503,13 +2723,25 @@
                             alt="${alt}" 
                             width="640" height="360"
                             style="${isGif ? 'image-rendering:auto;' : ''}">
-                        <div class="gallery-caption">SCREENSHOT #${label}</div>
+                        <div class="gallery-caption">
+                            SCREENSHOT #${label}
+                            ${isAdmin && isNsfw ? '<span class="nsfw-badge">NSFW</span>' : ''}
+                        </div>
+                        ${isAdmin ? `
+                            <div class="admin-controls">
+                                <button class="admin-btn ${isNsfw ? 'admin-btn-sfw' : 'admin-btn-nsfw'}" data-action="tag" data-idx="${globalIdx}">${isNsfw ? 'SFW' : 'NSFW'}</button>
+                                <button class="admin-btn admin-btn-del" data-action="delete" data-idx="${globalIdx}">DEL</button>
+                            </div>
+                        ` : ''}
                     </div>
                 `;
             }).join('');
 
             // Lightbox bindings
             bindLightbox();
+
+            // Admin controls
+            if (isAdmin) bindAdminControls();
 
             // Pager
             const btn = (text, onClick, disabled = false, active = false) => {
@@ -2536,14 +2768,11 @@
 
             const buttons = Array.from(pager.querySelectorAll('button'));
             let bi = 0;
-            // prev
             buttons[bi++].addEventListener('click', () => { page--; render(); window.scrollTo({ top: 0, behavior: 'smooth' }); });
-            // pages
             for (let p = from; p <= to; p++) {
                 const el = buttons[bi++];
                 el.addEventListener('click', () => { page = p; render(); window.scrollTo({ top: 0, behavior: 'smooth' }); });
             }
-            // next
             buttons[bi++].addEventListener('click', () => { page++; render(); window.scrollTo({ top: 0, behavior: 'smooth' }); });
         }
 
